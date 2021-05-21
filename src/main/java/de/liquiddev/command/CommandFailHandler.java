@@ -7,7 +7,7 @@ public interface CommandFailHandler<T> {
 
 	public void onPermissionFail(AbstractCommandSender<T> sender, CommandNode<T> command);
 
-	public void onUnsupportedCommandSender(AbstractCommandSender<?> sender, Class<?> requiredSenderType);
+	public void onUnsupportedCommandSender(AbstractCommandSender<?> sender, CommandNode<T> command, Class<?> requiredSenderType);
 
 	public void onCommandFail(AbstractCommandSender<T> sender, CommandNode<T> command, String reason);
 }

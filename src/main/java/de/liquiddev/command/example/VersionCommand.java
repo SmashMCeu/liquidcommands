@@ -16,17 +16,11 @@ public class VersionCommand extends CommandChild {
 	}
 
 	public static class VersionCommandBuilder {
-		private String prefix;
 		private String format = "§a%s §7version §a%s §7by %s";
 		private String version;
 		private String pluginName = "Plugin";
 		private String author = "unknown";
 		private CommandVisibility visibility = CommandVisibility.HIDE_HELP;
-
-		public VersionCommandBuilder prefix(String prefix) {
-			this.prefix = prefix;
-			return this;
-		}
 
 		public VersionCommandBuilder format(String format) {
 			this.format = format;
@@ -63,23 +57,21 @@ public class VersionCommand extends CommandChild {
 				ex.fillInStackTrace();
 				throw ex;
 			}
-			return new VersionCommand(pluginName, author, prefix, format, version, visibility);
+			return new VersionCommand(pluginName, author, format, version, visibility);
 		}
 	}
 
-	private String prefix;
 	private String format;
 	private String version;
 	private String pluginName;
 	private String author;
 
-	VersionCommand(String pluginName, String author, String prefix, String format, String version, CommandVisibility visibility) {
+	VersionCommand(String pluginName, String author, String format, String version, CommandVisibility visibility) {
 		super(Object.class, "version", "");
 		this.addAlias("ver");
 		this.addAlias("v");
 		this.pluginName = pluginName;
 		this.author = author;
-		this.prefix = prefix;
 		this.format = format;
 		this.version = version;
 		this.setVisibility(visibility);
@@ -88,8 +80,8 @@ public class VersionCommand extends CommandChild {
 	@Override
 	public void onCommand(AbstractCommandSender sender, CommandArguments args) throws CommandFailException {
 		StringBuilder str = new StringBuilder();
-		if (this.prefix != null) {
-			str.append(prefix);
+		if (this.getPrefix() != null) {
+			str.append(this.getPrefix());
 		}
 		str.append(String.format(format, pluginName, version, author));
 		sender.sendMessage(str.toString());

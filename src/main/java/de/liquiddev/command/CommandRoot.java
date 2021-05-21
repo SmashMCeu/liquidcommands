@@ -31,7 +31,7 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 	@SuppressWarnings("rawtypes")
 	public void executeCommand(AbstractCommandSender sender, CommandArguments args) {
 		if (!getSenderType().isInstance(sender.getSender())) {
-			this.failHandler.onUnsupportedCommandSender(sender, getSenderType());
+			this.failHandler.onUnsupportedCommandSender(sender, this, getSenderType());
 			return;
 		}
 		AbstractCommandSender<T> abstractSender = (AbstractCommandSender<T>) sender;
@@ -101,5 +101,9 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 	@Override
 	public String getPrefix() {
 		return prefix;
+	}
+	
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 }
