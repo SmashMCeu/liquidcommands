@@ -7,6 +7,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Autocomplete {
+
+	@SuppressWarnings("rawtypes")
+	public static final Autocompleter NONE = (t, s) -> Collections.emptyList();
+
 	private Autocomplete() {
 	}
 
@@ -45,6 +49,6 @@ public class Autocomplete {
 	}
 
 	public static <T> Autocompleter<T> none() {
-		return (t, s) -> Collections.emptyList();
+		return NONE;
 	}
 }
