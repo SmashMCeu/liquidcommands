@@ -16,9 +16,17 @@ public abstract class CommandChild<T> extends CommandNode<T> {
 		this.parent = parent;
 	}
 
+	public CommandRoot<? super T> getRoot() {
+		CommandNode<? super T> node = this;
+		while (node instanceof CommandChild) {
+			node = ((CommandChild<? super T>) node).getParent();
+		}
+		return (CommandRoot<? super T>) node;
+	}
+
 	@Override
 	public String getPrefix() {
-		return parent.getPrefix();
+		return this.parent.getPrefix();
 	}
 
 	@Override
