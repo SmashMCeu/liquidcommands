@@ -49,14 +49,13 @@ public class StatelessAutocompleter<T> implements Autocompleter {
 
 	@Override
 	public Collection<String> autocomplete(Object sender, String startsWith) {
-		String lowercase = startsWith.toLowerCase();
 		Collection<T> completableObjects = this.supplier.get();
 		Stream<T> completableStream = completableObjects.stream();
 		if (filters != null) {
 			completableStream = completableStream.filter(filters);
 		}
 		Stream<String> completableStringsStream = completableStream.map(mapper);
-		Stream<String> suggestionsStream = completableStringsStream.filter(Filters.startsWith(lowercase));
+		Stream<String> suggestionsStream = completableStringsStream.filter(Filters.startsWithIgnoreCase(startsWith));
 		Collection<String> suggestions = suggestionsStream.collect(Collectors.toList());
 		return suggestions;
 	}
