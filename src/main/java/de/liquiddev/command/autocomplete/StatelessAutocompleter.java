@@ -17,7 +17,6 @@ import de.liquiddev.util.common.stream.Filters;
  * unwanted elements.
  *
  * @param <T> type of elements to be auto completed
- * @param <R> type of sender
  */
 @SuppressWarnings("rawtypes")
 public class StatelessAutocompleter<T> implements Autocompleter {

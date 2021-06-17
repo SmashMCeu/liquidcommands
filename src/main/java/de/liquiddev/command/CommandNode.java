@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 
 import de.liquiddev.command.autocomplete.Autocomplete;
 import de.liquiddev.command.autocomplete.Autocompleter;
+import de.liquiddev.command.example.HelpCommand;
 
 public abstract class CommandNode<T> {
 
@@ -61,7 +62,7 @@ public abstract class CommandNode<T> {
 	}
 
 	/**
-	 * Get the suggestions for the command with the given {@link String[]} as
+	 * Get the suggestions for the command with the given {@link String} array as
 	 * Arguments. The cursor is assumed to be the end of the last argument.
 	 * 
 	 * Should return <code>null</code> to fallback to the {@link CommandRoot}
@@ -126,7 +127,7 @@ public abstract class CommandNode<T> {
 	 * Add a tab completer for a given index. Use {@link Autocomplete} for
 	 * predefined tab completer.
 	 * 
-	 * @param argument      index to be autocompleted
+	 * @param index         argument index for the autocompleter
 	 * @param autocompleter use {@link Autocomplete}
 	 */
 	public void setAutocompleter(int index, Autocompleter<? super T> autocompleter) {
@@ -208,7 +209,8 @@ public abstract class CommandNode<T> {
 	 * Set the command visibility. This affects the autocomplete feature as well as
 	 * the {@link HelpCommand} command list.
 	 * 
-	 * @param hidden true to hide
+	 * @param visibility the command visibility
+	 * 
 	 */
 	public void setVisibility(CommandVisibility visibility) {
 		this.visibility = visibility;
