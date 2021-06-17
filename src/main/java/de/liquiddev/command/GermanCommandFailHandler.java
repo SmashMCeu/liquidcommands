@@ -1,13 +1,22 @@
 package de.liquiddev.command;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import de.liquiddev.util.common.EnumUtil;
+
 public class GermanCommandFailHandler<T> extends DefaultCommandFailHandler<T> {
 
 	@Override
 	public void onInvalidArgument(AbstractCommandSender<T> sender, CommandNode<T> command, Class<?> required, String provided) {
 		if (required.equals(Integer.class) || required.equals(Long.class)) {
-			sender.sendMessage(command.getPrefix() + "§cUngültiger Befehl! §e" + provided + " §cist keine Zahl!");
+			sender.sendMessage(command.getPrefix() + "§cUngültige Parameter! §e" + provided + " §cist keine Zahl!");
+		} else if (required.isEnum()) {
+			Enum<?>[] values = EnumUtil.getValues((Class<Enum<?>>) required);
+			String available = Stream.of(values).map(e -> e.name()).collect(Collectors.joining(", "));
+			sender.sendMessage(command.getPrefix() + "§cUngültiger Paramter: §e" + provided + "§c, verfügbar: §e" + available);
 		} else {
-			sender.sendMessage(command.getPrefix() + "§cUngültiger Befehl! §e" + provided + " §cist kein " + required.getSimpleName() + "!");
+			sender.sendMessage(command.getPrefix() + "§cUngültige Parameter! §e" + provided + " §cist kein " + required.getSimpleName() + "!");
 		}
 	}
 

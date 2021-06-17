@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import org.bukkit.craftbukkit.libs.joptsimple.internal.Strings;
 
+import de.liquiddev.util.common.EnumUtil;
+
 public class CommandArguments {
 
 	public static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
@@ -47,6 +49,21 @@ public class CommandArguments {
 		} catch (NumberFormatException ex) {
 			throw new InvalidCommandArgException(command, Double.class, arg);
 		}
+	}
+
+	public <T extends Enum<?>> T getEnum(int index, Class<T> enumType) throws InvalidCommandArgException {
+		if (arguments.length <= index) {
+			throw new MissingCommandArgException(command, enumType, index);
+		}
+		String name = arguments[index];
+		T[] values = EnumUtil.getValues(enumType);
+		for (T t : values) {
+			if (t.name().equalsIgnoreCase(name)) {
+				return t;
+			}
+		}
+		throw new InvalidCommandArgException(this.command, enumType, name);
+
 	}
 
 	protected CommandNode<?> getCommand() {
