@@ -1,8 +1,6 @@
 package de.liquiddev.command.adapter.bukkit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 
 import de.liquiddev.command.AbstractCommandSender;
@@ -22,9 +20,7 @@ abstract class BukkitCommand<T extends CommandSender> extends CommandRoot<T> {
 	}
 
 	public void register(Plugin plugin) {
-		PluginCommand command = Bukkit.getPluginCommand(this.getName());
-		command.setExecutor(adapter);
-		command.setTabCompleter(adapter);
+		adapter.register(plugin);
 	}
 
 	@Override

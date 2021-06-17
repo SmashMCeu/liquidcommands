@@ -1,30 +1,48 @@
 package de.liquiddev.command.adapter.bukkit;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.plugin.Plugin;
 
 import de.liquiddev.command.AbstractCommandSender;
 import de.liquiddev.command.CommandArguments;
+import de.liquiddev.command.CommandRoot;
 import de.liquiddev.command.adapter.AbstractCommandAdapter;
 
-class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> implements CommandExecutor, TabCompleter {
+class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
+
+	private CommandListener listener;
 
 	public BukkitCommandAdapter(BukkitCommand<?> command) {
 		super(command);
+		this.listener = new CommandListener(command.getName(), command.getDescription(), command.getUsage(), Arrays.asList(command.getAliases()));
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String var3, String[] args) {
-		return this.onCommand(sender, args);
-	}
+	public void register(Plugin plugin) {
+		CommandRoot<?> root = this.getCommand();
+		String name = root.getName();
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String arg2, String[] args) {
-		return this.onTabComplete(sender, args);
+		try {
+			Server server = Bukkit.getServer();
+			Method commandMapGetter = server.getClass().getMethod("getCommandMap");
+			CommandMap commandMap = (CommandMap) commandMapGetter.invoke(server);
+
+			if (Bukkit.getPluginCommand(name) != null) {
+				Bukkit.getPluginCommand(name).unregister(commandMap);
+				throw new IllegalStateException("command '" + name + "' already registered through plugin.yml");
+			}
+
+			commandMap.register(plugin.getDescription().getName(), listener);
+		} catch (Exception ex) {
+			throw new RuntimeException("could not register bukkit command", ex);
+		}
 	}
 
 	@Override
@@ -35,5 +53,47 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> impleme
 	@Override
 	public CommandArguments getArguments(String[] args) {
 		return Arguments.fromStrings(this.getCommand(), args);
+	}
+
+	public class CommandListener extends Command {
+
+		protected CommandListener(String name, String description, String usage, List<String> aliases) {
+			super(name, description, usage, aliases);
+		}
+
+		@Override
+		public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+			return BukkitCommandAdapter.super.onTabComplete(sender, args);
+		}
+
+		@Override
+		public boolean execute(CommandSender sender, String cmd, String[] args) {
+			return BukkitCommandAdapter.super.onCommand(sender, args);
+		}
+
+		@Override
+		public String getName() {
+			return getCommand().getName();
+		}
+
+		@Override
+		public String getUsage() {
+			return getCommand().getUsage();
+		}
+
+		@Override
+		public String getDescription() {
+			return getCommand().getDescription();
+		}
+
+		@Override
+		public String getPermission() {
+			return getCommand().getPermission();
+		}
+
+		@Override
+		public List<String> getAliases() {
+			return Arrays.asList(getCommand().getAliases());
+		}
 	}
 }
