@@ -31,7 +31,7 @@ public class GermanCommandFailHandler<T> extends DefaultCommandFailHandler<T> {
 	}
 
 	@Override
-	public void onUnsupportedCommandSender(AbstractCommandSender<?> sender, CommandNode<T> command, Class<?> requiredSenderType) {
+	public void onUnsupportedCommandSender(AbstractCommandSender<T> sender, CommandNode<T> command, Class<?> requiredSenderType) {
 		sender.sendMessage(command.getPrefix() + "§cDieser Befehl kann nur als " + requiredSenderType.getSimpleName() + " ausgeführt werden!");
 	}
 

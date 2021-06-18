@@ -248,7 +248,7 @@ public abstract class CommandNode<T> {
 
 	public abstract String getAbsoluteName();
 
-	protected abstract String getPrefix();
+	public abstract String getPrefix();
 
 	protected abstract void onCommand(AbstractCommandSender<T> sender, CommandArguments args) throws CommandFailException;
 }

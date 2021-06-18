@@ -44,7 +44,7 @@ public class DefaultCommandFailHandler<T> implements CommandFailHandler<T> {
 	}
 
 	@Override
-	public void onUnsupportedCommandSender(AbstractCommandSender<?> sender, CommandNode<T> command, Class<?> requiredSenderType) {
+	public void onUnsupportedCommandSender(AbstractCommandSender<T> sender, CommandNode<T> command, Class<?> requiredSenderType) {
 		sender.sendMessage(command.getPrefix() + "§cThis command can only be executed as a " + requiredSenderType.getSimpleName() + "!");
 	}
 
