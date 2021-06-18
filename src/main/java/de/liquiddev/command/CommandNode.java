@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Preconditions;
+
 import de.liquiddev.command.autocomplete.Autocomplete;
 import de.liquiddev.command.autocomplete.Autocompleter;
 import de.liquiddev.command.example.HelpCommand;
@@ -32,8 +34,11 @@ public abstract class CommandNode<T> {
 	private String description;
 
 	public CommandNode(Class<T> senderType, String name, String hint) {
+		Preconditions.checkNotNull(senderType, "senderType must not be null");
+		Preconditions.checkNotNull(name, "name must not be null");
+		Preconditions.checkArgument(!name.isEmpty(), "name must not be empty");
 		this.name = name;
-		this.hint = hint;
+		this.hint = hint == null ? "" : hint;
 		this.senderType = senderType;
 		this.aliases = new String[] {};
 		this.visibility = CommandVisibility.SHOW_ALL;
@@ -170,6 +175,7 @@ public abstract class CommandNode<T> {
 	}
 
 	public void setAliases(String[] aliases) {
+		Preconditions.checkNotNull(aliases, "aliases must not be null");
 		this.aliases = aliases;
 	}
 
@@ -210,9 +216,9 @@ public abstract class CommandNode<T> {
 	 * the {@link HelpCommand} command list.
 	 * 
 	 * @param visibility the command visibility
-	 * 
 	 */
 	public void setVisibility(CommandVisibility visibility) {
+		Preconditions.checkNotNull(visibility, "visibility must not be null");
 		this.visibility = visibility;
 	}
 

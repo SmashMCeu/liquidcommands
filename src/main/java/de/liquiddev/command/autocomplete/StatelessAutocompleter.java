@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Preconditions;
+
 import de.liquiddev.util.common.stream.Filters;
 
 /**
@@ -31,6 +33,8 @@ public class StatelessAutocompleter<T> implements Autocompleter {
 	}
 
 	public StatelessAutocompleter(Supplier<Collection<T>> supplier, Function<T, String> mapper) {
+		Preconditions.checkNotNull(supplier, "supplier must not be null");
+		Preconditions.checkNotNull(mapper, "mapper must not be null");
 		this.supplier = supplier;
 		this.mapper = mapper;
 	}

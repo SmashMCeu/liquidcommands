@@ -1,5 +1,7 @@
 package de.liquiddev.command.example;
 
+import com.google.common.base.Preconditions;
+
 import de.liquiddev.command.AbstractCommandSender;
 import de.liquiddev.command.CommandArguments;
 import de.liquiddev.command.CommandChild;
@@ -74,6 +76,11 @@ public class HelpCommand extends CommandChild {
 
 	HelpCommand(CommandNode<?> commandToHelp, boolean includeSelf, boolean checkPermission, String header, String footer, String format, String descFormat) {
 		super(Object.class, "help", "");
+		Preconditions.checkNotNull(commandToHelp, "commandToHelp must not be null");
+		Preconditions.checkNotNull(header, "header must not be null");
+		Preconditions.checkNotNull(footer, "footer must not be null");
+		Preconditions.checkNotNull(format, "format must not be null");
+		Preconditions.checkNotNull(descFormat, "descFormat must not be null");
 		this.addAlias("h");
 		this.addAlias("?");
 		this.command = commandToHelp;

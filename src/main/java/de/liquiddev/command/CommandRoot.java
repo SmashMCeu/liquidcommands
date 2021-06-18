@@ -4,13 +4,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 import de.liquiddev.command.autocomplete.Autocompleter;
 import de.liquiddev.command.example.ReportErrorsCommand;
 import de.liquiddev.util.common.CollectionUtil;
 
 public abstract class CommandRoot<T> extends CommandNode<T> {
 
-	private Autocompleter<T> defaultCompleter;
+	private Autocompleter<T> defaultAutocompleter;
 	private CommandFailHandler<T> failHandler;
 	private ErrorReporter errorReporter;
 	private String prefix;
@@ -21,10 +23,11 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 
 	public CommandRoot(Class<T> senderType, String name, String hint, String prefix) {
 		super(senderType, name, hint);
-		this.prefix = prefix;
+		Preconditions.checkNotNull(prefix, "prefix must not be null");
 		this.failHandler = DefaultCommandFailHandler.getDefault();
 		this.errorReporter = ErrorReporter.getDefaultReporter();
 		this.addSubCommand(new ReportErrorsCommand(this));
+		this.prefix = prefix;
 	}
 
 	@Override
@@ -59,8 +62,8 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 
 		/* Fallback to default tab completer */
 		if (suggestions == null) {
-			if (defaultCompleter != null) {
-				Collection<String> defaultSuggestions = defaultCompleter.autocomplete(abstractSender.getSender(), args[args.length - 1]);
+			if (defaultAutocompleter != null) {
+				Collection<String> defaultSuggestions = defaultAutocompleter.autocomplete(abstractSender.getSender(), args[args.length - 1]);
 				suggestions = CollectionUtil.toList(defaultSuggestions);
 			} else {
 				suggestions = Collections.emptyList();
@@ -70,11 +73,12 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 	}
 
 	public Autocompleter<T> getDefaultAutocompleter() {
-		return this.defaultCompleter;
+		return this.defaultAutocompleter;
 	}
 
-	public void setDefaultAutocompleter(Autocompleter<T> completable) {
-		this.defaultCompleter = completable;
+	public void setDefaultAutocompleter(Autocompleter<T> autocompleter) {
+		Preconditions.checkNotNull(autocompleter, "autocompleter must not be null");
+		this.defaultAutocompleter = autocompleter;
 	}
 
 	public CommandFailHandler<T> getFailHandler() {
@@ -82,15 +86,17 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 	}
 
 	public void setFailHandler(CommandFailHandler<T> failHandler) {
+		Preconditions.checkNotNull(failHandler, "failHandler must not be null");
 		this.failHandler = failHandler;
-	}
-
-	public void setErrorReporter(ErrorReporter errorReporter) {
-		this.errorReporter = errorReporter;
 	}
 
 	public ErrorReporter getErrorReporter() {
 		return errorReporter;
+	}
+
+	public void setErrorReporter(ErrorReporter errorReporter) {
+		Preconditions.checkNotNull(errorReporter, "errorReporter must not be null");
+		this.errorReporter = errorReporter;
 	}
 
 	@Override
@@ -102,8 +108,9 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 	public String getPrefix() {
 		return prefix;
 	}
-	
+
 	public void setPrefix(String prefix) {
+		Preconditions.checkNotNull(prefix, "prefix must not be null");
 		this.prefix = prefix;
 	}
 }

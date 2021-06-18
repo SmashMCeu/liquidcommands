@@ -1,9 +1,12 @@
 package de.liquiddev.command;
 
+import com.google.common.base.Preconditions;
+
 public abstract class AbstractCommandSender<T> {
 	protected T sender;
 
 	public AbstractCommandSender(T sender) {
+		Preconditions.checkNotNull(sender, "sender must not be null");
 		this.sender = sender;
 	}
 

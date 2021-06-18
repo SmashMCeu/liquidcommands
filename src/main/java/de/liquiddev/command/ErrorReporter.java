@@ -1,5 +1,7 @@
 package de.liquiddev.command;
 
+import com.google.common.base.Preconditions;
+
 /**
  * TODO rework this to be a part of command adapter or root.
  * 
@@ -12,6 +14,7 @@ public abstract class ErrorReporter {
 	}
 
 	public static void setDefaultReporter(ErrorReporter reporter) {
+		Preconditions.checkNotNull(reporter);
 		instance = reporter;
 	}
 

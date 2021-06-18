@@ -3,6 +3,8 @@ package de.liquiddev.command;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.base.Preconditions;
+
 import de.liquiddev.util.common.EnumUtil;
 
 public class DefaultCommandFailHandler<T> implements CommandFailHandler<T> {
@@ -14,6 +16,7 @@ public class DefaultCommandFailHandler<T> implements CommandFailHandler<T> {
 	}
 
 	public static void setDefault(CommandFailHandler<?> defaultHandler) {
+		Preconditions.checkNotNull(defaultHandler);
 		instance = defaultHandler;
 	}
 

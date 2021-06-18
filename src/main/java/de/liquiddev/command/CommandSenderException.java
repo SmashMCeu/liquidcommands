@@ -1,5 +1,7 @@
 package de.liquiddev.command;
 
+import com.google.common.base.Preconditions;
+
 public class CommandSenderException extends CommandFailException {
 
 	private static final long serialVersionUID = 1L;
@@ -8,6 +10,7 @@ public class CommandSenderException extends CommandFailException {
 
 	public CommandSenderException(CommandNode<?> command, Class<?> requiredType) {
 		super(command);
+		Preconditions.checkNotNull(requiredType, "requiredType must not be null");
 		this.requiredType = requiredType;
 	}
 

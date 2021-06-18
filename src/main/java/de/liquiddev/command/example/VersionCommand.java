@@ -2,6 +2,8 @@ package de.liquiddev.command.example;
 
 import java.util.IllegalFormatException;
 
+import com.google.common.base.Preconditions;
+
 import de.liquiddev.command.AbstractCommandSender;
 import de.liquiddev.command.CommandArguments;
 import de.liquiddev.command.CommandChild;
@@ -68,6 +70,10 @@ public class VersionCommand extends CommandChild {
 
 	VersionCommand(String pluginName, String author, String format, String version, CommandVisibility visibility) {
 		super(Object.class, "version", "");
+		Preconditions.checkNotNull(pluginName, "pluginName must not be null");
+		Preconditions.checkNotNull(pluginName, "format must not be null");
+		Preconditions.checkNotNull(pluginName, "version must not be null");
+		Preconditions.checkNotNull(pluginName, "visibility must not be null");
 		this.addAlias("ver");
 		this.addAlias("v");
 		this.pluginName = pluginName;

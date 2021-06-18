@@ -1,5 +1,7 @@
 package de.liquiddev.command;
 
+import com.google.common.base.Preconditions;
+
 public abstract class CommandChild<T> extends CommandNode<T> {
 
 	private CommandNode<? super T> parent;
@@ -13,6 +15,7 @@ public abstract class CommandChild<T> extends CommandNode<T> {
 	}
 
 	protected void setParent(CommandNode<? super T> parent) {
+		Preconditions.checkNotNull(parent, "parent must not be null");
 		this.parent = parent;
 	}
 

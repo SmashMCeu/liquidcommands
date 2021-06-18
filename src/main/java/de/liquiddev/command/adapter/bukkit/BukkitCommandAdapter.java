@@ -68,7 +68,8 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
 		@Override
 		public boolean execute(CommandSender sender, String cmd, String[] args) {
-			return BukkitCommandAdapter.super.onCommand(sender, args);
+			BukkitCommandAdapter.super.onCommand(sender, args);
+			return true;
 		}
 
 		@Override
@@ -83,7 +84,8 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
 		@Override
 		public String getDescription() {
-			return getCommand().getDescription();
+			String description = getCommand().getDescription();
+			return description != null ? description : "";
 		}
 
 		@Override

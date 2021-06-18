@@ -4,11 +4,13 @@ import java.util.Arrays;
 
 import org.bukkit.craftbukkit.libs.joptsimple.internal.Strings;
 
+import com.google.common.base.Preconditions;
+
 import de.liquiddev.util.common.EnumUtil;
 
 public class CommandArguments {
 
-	public static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
+	protected static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
 		return new CommandArguments(command, args);
 	}
 
@@ -16,6 +18,8 @@ public class CommandArguments {
 	private CommandNode<?> command;
 
 	protected CommandArguments(CommandNode<?> command, String[] arguments) {
+		Preconditions.checkNotNull(command, "command must not be null");
+		Preconditions.checkNotNull(arguments, "arguments must not be null");
 		this.command = command;
 		this.arguments = arguments;
 	}

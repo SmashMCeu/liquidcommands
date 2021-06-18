@@ -5,15 +5,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Preconditions;
+
 class TextAutocompleter<T> implements Autocompleter<T> {
 
 	private String[] suggestions;
 
 	public TextAutocompleter(List<String> suggestions) {
+		Preconditions.checkNotNull(suggestions, "suggestions must not be null");
 		this.setSuggestions(suggestions.toArray(new String[] {}));
 	}
 
 	public TextAutocompleter(String... suggestions) {
+		Preconditions.checkNotNull(suggestions, "suggestions must not be null");
 		this.setSuggestions(suggestions);
 	}
 
