@@ -11,7 +11,7 @@ import de.liquiddev.command.MissingCommandArgException;
 
 public class Arguments extends CommandArguments {
 
-	protected static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
+	public static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
 		return new Arguments(command, args);
 	}
 

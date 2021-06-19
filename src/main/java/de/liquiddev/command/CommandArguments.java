@@ -10,7 +10,7 @@ import de.liquiddev.util.common.EnumUtil;
 
 public class CommandArguments {
 
-	protected static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
+	public static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
 		return new CommandArguments(command, args);
 	}
 

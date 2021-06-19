@@ -10,7 +10,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class ProxyArguments extends CommandArguments {
 
-	protected static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
+	public static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
 		return new ProxyArguments(command, args);
 	}
 
