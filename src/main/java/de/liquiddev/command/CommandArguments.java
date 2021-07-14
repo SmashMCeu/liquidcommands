@@ -24,7 +24,24 @@ public class CommandArguments {
 		this.arguments = arguments;
 	}
 
-	public String getString(int index) throws InvalidCommandArgException {
+	/**
+	 * Skips to next index and removes the previous.
+	 */
+	protected CommandArguments next(CommandNode<?> nextNode) {
+		this.arguments = Arrays.copyOfRange(arguments, 1, arguments.length);
+		this.command = nextNode;
+		return this;
+	}
+
+	protected CommandNode<?> getCommand() {
+		return command;
+	}
+
+	public CommandArguments copyOfRange(int from, int to) {
+		return CommandArguments.fromStrings(this.command, Arrays.copyOfRange(arguments, from, to));
+	}
+
+	public String getString(int index) throws MissingCommandArgException {
 		if (arguments.length <= index) {
 			throw new MissingCommandArgException(command, String.class, index);
 		}
@@ -67,24 +84,19 @@ public class CommandArguments {
 			}
 		}
 		throw new InvalidCommandArgException(this.command, enumType, name);
-
 	}
 
-	protected CommandNode<?> getCommand() {
-		return command;
-	}
+	public String getJoinedString(int startIndex) throws InvalidCommandArgException {
+		if (arguments.length <= startIndex) {
+			throw new MissingCommandArgException(command, String.class, startIndex);
+		}
 
-	/**
-	 * Skips to next index and removes the previous.
-	 */
-	protected CommandArguments next(CommandNode<?> nextNode) {
-		this.arguments = Arrays.copyOfRange(arguments, 1, arguments.length);
-		this.command = nextNode;
-		return this;
-	}
-
-	public CommandArguments copyOfRange(int from, int to) {
-		return CommandArguments.fromStrings(this.command, Arrays.copyOfRange(arguments, from, to));
+		StringBuilder str = new StringBuilder();
+		for (int index = startIndex; index < arguments.length; index++) {
+			str.append(arguments[index]);
+			str.append(" ");
+		}
+		return str.toString().trim();
 	}
 
 	public String join(String delimiter) throws InvalidCommandArgException {
@@ -107,6 +119,97 @@ public class CommandArguments {
 
 	public String join() throws InvalidCommandArgException {
 		return this.join(" ");
+	}
+
+	/**
+	 * Checks if the given index is present.
+	 * 
+	 * @param index command argument index to be checked
+	 * @return <code>true</code> if the index is present and not out of bounds
+	 */
+	public boolean isPresent(int index) {
+		return index < arguments.length;
+	}
+
+	/**
+	 * Checks if the given {@link String} is equal to the argument at the given
+	 * index. Returns <code>false</code> if either the index is out of bounds or the
+	 * given {@link String} does not match to the commands arguments.
+	 * 
+	 * Note: This is not case sensitive. If you want case sensitivity to matter, use
+	 * checkWithCaseOptional() instead.
+	 * 
+	 * @param index the index to look at
+	 * @param str   the {@link String} to be checked
+	 * @return <code>true</code> if the {@link String} is present and equal.
+	 */
+	public boolean checkOptional(int index, String str) {
+		if (!isPresent(index)) {
+			return false;
+		}
+
+		try {
+			return getString(index).equalsIgnoreCase(str);
+		} catch (InvalidCommandArgException e) {
+			// this should never happen, hopefully
+			throw new RuntimeException("command index out of bounds: " + index);
+		}
+	}
+
+	/**
+	 * Checks if the given case sensitive {@link String} is equal to the argument at
+	 * the given index. Returns <code>false</code> if either the index is out of
+	 * bounds or the given {@link String} does not match to the commands arguments.
+	 * 
+	 * 
+	 * @param index the index to look at
+	 * @param str   the case sensitive {@link String} to be checked
+	 * @return <code>true</code> if the {@link String} is present and equal.
+	 */
+	public boolean checkWithCaseOptional(int index, String str) {
+		if (!isPresent(index)) {
+			return false;
+		}
+
+		try {
+			return getString(index).equals(str);
+		} catch (InvalidCommandArgException e) {
+			// this should never happen, hopefully
+			throw new RuntimeException("command index out of bounds: " + index);
+		}
+	}
+
+	/**
+	 * Checks if the given {@link String} is equal to the argument at the given
+	 * index. Returns <code>false</code> if the given {@link String} does not match
+	 * the commands arguments. If the index is out of bounds, a
+	 * {@link MissingCommandArgException} is thrown.
+	 * 
+	 * Note: This is not case sensitive. If you want case sensitivity to matter, use
+	 * checkWithCase() instead.
+	 * 
+	 * @param index the index to look at
+	 * @param str   the {@link String} to be checked
+	 * @return <code>true</code> if the {@link String} is present and equal.
+	 * @throws MissingCommandArgException if the index is out of bounds
+	 */
+	public boolean check(int index, String str) throws MissingCommandArgException {
+		return getString(index).equalsIgnoreCase(str);
+	}
+
+	/**
+	 * Checks if the given case sensitive {@link String} is equal to the argument at
+	 * the given index. Returns <code>false</code> if the given {@link String} does
+	 * not match the commands arguments. If the index is out of bounds, a
+	 * {@link MissingCommandArgException} is thrown.
+	 * 
+	 * @param index the index to look at
+	 * @param str   the case sensitive {@link String} to be checked
+	 * @return <code>true</code> if the {@link String} is present and equal.
+	 * @throws MissingCommandArgException if the index is out of bounds
+	 */
+	public boolean checkWithCase(int index, String str) throws MissingCommandArgException {
+		return getString(index).equals(str);
 	}
 
 	protected String[] getArguments() {
