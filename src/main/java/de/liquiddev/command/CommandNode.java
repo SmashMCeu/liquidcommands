@@ -51,7 +51,7 @@ public abstract class CommandNode<T> {
 		}
 
 		if (args.length() > 0) {
-			CommandChild<? extends T> subCommand = getSubCommand(args.getString(0));
+			CommandChild<? extends T> subCommand = getSubCommand(args.get(0));
 			if (subCommand != null) {
 				AbstractCommandSender typelessSender = (AbstractCommandSender) sender;
 				Class<? extends T> targetType = subCommand.getSenderType();

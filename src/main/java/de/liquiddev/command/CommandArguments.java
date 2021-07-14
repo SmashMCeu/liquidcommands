@@ -41,7 +41,19 @@ public class CommandArguments {
 		return CommandArguments.fromStrings(this.command, Arrays.copyOfRange(arguments, from, to));
 	}
 
+	/**
+	 * {@link Deprecated} use just get() instead.
+	 * 
+	 * @param index deprecated
+	 * @return deprecated
+	 * @throws MissingCommandArgException deprecated
+	 */
+	@Deprecated
 	public String getString(int index) throws MissingCommandArgException {
+		return get(index);
+	}
+
+	public String get(int index) throws MissingCommandArgException {
 		if (arguments.length <= index) {
 			throw new MissingCommandArgException(command, String.class, index);
 		}
