@@ -16,17 +16,21 @@ import com.google.common.base.Preconditions;
 import de.liquiddev.command.autocomplete.Autocomplete;
 import de.liquiddev.command.autocomplete.Autocompleter;
 import de.liquiddev.command.example.HelpCommand;
+import de.liquiddev.command.ratelimit.CommandRateLimitExceededException;
+import de.liquiddev.command.ratelimit.RateLimit;
+import de.liquiddev.command.ratelimit.RateLimiter;
 
 public abstract class CommandNode<T> {
 
 	private Collection<CommandChild<? extends T>> subCommands = new LinkedList<>();
 	private Map<Integer, Autocompleter<? super T>> autocompleters = new HashMap<>(0);
 
+	private Class<T> senderType;
 	private String name;
 	private String hint;
 	private String[] aliases;
 	private CommandVisibility visibility;
-	private Class<T> senderType;
+	private RateLimiter ratelimit;
 
 	@Nullable
 	private String permission;
@@ -42,12 +46,16 @@ public abstract class CommandNode<T> {
 		this.senderType = senderType;
 		this.aliases = new String[] {};
 		this.visibility = CommandVisibility.SHOW_ALL;
+		this.ratelimit = RateLimit.none();
 	}
 
 	@SuppressWarnings("rawtypes")
 	protected void executeCommand(AbstractCommandSender<T> sender, CommandArguments args) throws CommandFailException {
 		if (!this.hasPermission(sender)) {
 			throw new CommandPermissionException(this);
+		}
+		if (!this.ratelimit.tryAcquire(sender.getSender())) {
+			throw new CommandRateLimitExceededException(this);
 		}
 
 		if (args.length() > 0) {
@@ -224,6 +232,14 @@ public abstract class CommandNode<T> {
 
 	public CommandVisibility getVisibility() {
 		return visibility;
+	}
+
+	public void setRatelimit(RateLimiter ratelimit) {
+		this.ratelimit = ratelimit;
+	}
+
+	public RateLimiter getRatelimit() {
+		return ratelimit;
 	}
 
 	public boolean isAutocompleteVisible() {

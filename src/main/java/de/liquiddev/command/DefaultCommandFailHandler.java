@@ -49,6 +49,11 @@ public class DefaultCommandFailHandler<T> implements CommandFailHandler<T> {
 	}
 
 	@Override
+	public void onRateLimitExceeded(AbstractCommandSender<T> sender, CommandNode<T> command) {
+		sender.sendMessage(command.getPrefix() + "§cPlease wait before doing this again.");
+	}
+
+	@Override
 	public void onCommandFail(AbstractCommandSender<T> sender, CommandNode<T> command, String reason) {
 		sender.sendMessage(command.getPrefix() + "§c" + reason);
 	}

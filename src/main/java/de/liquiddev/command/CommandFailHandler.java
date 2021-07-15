@@ -9,5 +9,7 @@ public interface CommandFailHandler<T> {
 
 	public void onUnsupportedCommandSender(AbstractCommandSender<T> sender, CommandNode<T> command, Class<?> requiredSenderType);
 
+	public void onRateLimitExceeded(AbstractCommandSender<T> sender, CommandNode<T> command);
+
 	public void onCommandFail(AbstractCommandSender<T> sender, CommandNode<T> command, String reason);
 }
