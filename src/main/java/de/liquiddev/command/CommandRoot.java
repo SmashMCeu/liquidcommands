@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 
 import de.liquiddev.command.autocomplete.Autocompleter;
 import de.liquiddev.command.example.ReportErrorsCommand;
+import de.liquiddev.command.ratelimit.CommandRateLimitExceededException;
 import de.liquiddev.util.common.CollectionUtil;
 
 public abstract class CommandRoot<T> extends CommandNode<T> {
@@ -46,6 +47,8 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 			this.failHandler.onInvalidArgument(abstractSender, ex.getCommand(), ex.getRequired(), ex.getProvided());
 		} catch (CommandPermissionException ex) {
 			this.failHandler.onPermissionFail(abstractSender, ex.getCommand());
+		} catch (CommandRateLimitExceededException ex) {
+			this.failHandler.onRateLimitExceeded(abstractSender, ex.getCommand());
 		} catch (CommandFailException ex) {
 			this.failHandler.onCommandFail(abstractSender, ex.getCommand(), ex.getMessage());
 		}
