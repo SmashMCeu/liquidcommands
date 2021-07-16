@@ -26,7 +26,7 @@ public abstract class ProxyCommand<T extends CommandSender> extends CommandRoot<
 
 	@Override
 	protected void onCommand(AbstractCommandSender<T> sender, CommandArguments args) throws CommandFailException {
-		this.onCommand(sender, (ProxyArguments) args);
+		this.onCommand(sender.getSender(), (ProxyArguments) args);
 	}
 
 	protected abstract void onCommand(T sender, ProxyArguments args) throws CommandFailException;
