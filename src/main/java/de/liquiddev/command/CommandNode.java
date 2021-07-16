@@ -54,7 +54,7 @@ public abstract class CommandNode<T> {
 		if (!this.hasPermission(sender)) {
 			throw new CommandPermissionException(this);
 		}
-		if (!this.ratelimit.tryAcquire(sender.getSender())) {
+		if (!this.ratelimit.acquire(sender.getSender())) {
 			throw new CommandRateLimitExceededException(this);
 		}
 

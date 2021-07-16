@@ -1,4 +1,4 @@
-package de.liquiddev.util.common;
+package de.liquiddev.command;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
