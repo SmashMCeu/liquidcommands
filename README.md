@@ -1,7 +1,11 @@
 # LiquidCommands library
 
+## Features
+* Dynamic command nodes
+* Automatic autocomplete with custom autocompletors
+* Variable arguments
+* Rate limit / cooldown system
+* Bukkit, Bungeecord & Velocity support
+
 ## Future plans / ideas
-- Make plugin yml command entry optional / not required
-- Built in delay/cooldown system
 - Functional commands as one-liner
-- Variable arguments in commands (/command [player] subcommand1 subcommand2...)
