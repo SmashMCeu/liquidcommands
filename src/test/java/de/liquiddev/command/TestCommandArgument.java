@@ -1,15 +1,12 @@
 package de.liquiddev.command;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
-
-import de.liquiddev.command.CommandArguments;
-import de.liquiddev.command.CommandNode;
-import de.liquiddev.command.MissingCommandArgException;
 
 public class TestCommandArgument {
 
@@ -75,5 +72,54 @@ public class TestCommandArgument {
 		CommandNode<?> command = mock(CommandNode.class);
 		CommandArguments args = CommandArguments.fromStrings(command, new String[] {});
 		assertFalse(args.checkOptional(0, "test"));
+	}
+
+	@Test
+	public void testNext() {
+		CommandNode<?> command = mock(CommandNode.class);
+		CommandArguments args = CommandArguments.fromStrings(command, new String[] { "prevarg", "command", "arg0" });
+		args.next(command, 2);
+		assertEquals(1, args.length());
+	}
+
+	@Test
+	public void testPrevArgs() throws MissingCommandArgException {
+		CommandNode<?> command = mock(CommandNode.class);
+		CommandArguments args = CommandArguments.fromStrings(command, new String[] { "prevarg", "command", "arg0" });
+		args.next(command, 2);
+		assertTrue(args.isPresent(-1));
+		assertEquals("prevarg", args.get(-1));
+	}
+
+	@Test
+	public void testPrevArgsOutOfBounds() throws MissingCommandArgException {
+		CommandNode<?> command = mock(CommandNode.class);
+		CommandArguments args = CommandArguments.fromStrings(command, new String[] { "prevarg", "command", "arg0" });
+		args.next(command, 1);
+		assertThrows(IndexOutOfBoundsException.class, () -> args.get(-2));
+	}
+
+	@Test
+	public void testCheckOptionalPrevArgs() throws MissingCommandArgException {
+		CommandNode<?> command = mock(CommandNode.class);
+		CommandArguments args = CommandArguments.fromStrings(command, new String[] { "prevarg", "commandname", "arg0" });
+		args.next(command, 2);
+		assertTrue(args.checkOptional(-1, "prevarg"));
+	}
+
+	@Test
+	public void testCheckOptionalPrevArgsNegative() throws MissingCommandArgException {
+		CommandNode<?> command = mock(CommandNode.class);
+		CommandArguments args = CommandArguments.fromStrings(command, new String[] { "prevarg", "commandname", "arg0" });
+		args.next(command, 2);
+		assertFalse(args.check(-1, "commandname"));
+	}
+
+	@Test
+	public void testCheckOptionalPrevArgsOutOfBounds() throws MissingCommandArgException {
+		CommandNode<?> command = mock(CommandNode.class);
+		CommandArguments args = CommandArguments.fromStrings(command, new String[] { "prevarg", "commandname", "arg0" });
+		args.next(command, 2);
+		assertFalse(args.checkOptional(-2, "prevargs"));
 	}
 }
