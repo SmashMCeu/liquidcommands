@@ -14,8 +14,9 @@ public class CommandArguments {
 		return new CommandArguments(command, args);
 	}
 
-	private String[] arguments;
+	private final String[] arguments;
 	private CommandNode<?> command;
+	private int indexOffset;
 
 	protected CommandArguments(CommandNode<?> command, String[] arguments) {
 		Preconditions.checkNotNull(command, "command must not be null");
@@ -25,12 +26,25 @@ public class CommandArguments {
 	}
 
 	/**
-	 * Skips to next index and removes the previous.
+	 * Skips to next index.
 	 */
 	protected CommandArguments next(CommandNode<?> nextNode) {
-		this.arguments = Arrays.copyOfRange(arguments, 1, arguments.length);
+		this.indexOffset++;
 		this.command = nextNode;
 		return this;
+	}
+
+	protected int translateIndex(int index, Class<?> indexType) throws MissingCommandArgException {
+		int actualIndex = index + indexOffset;
+		if (arguments.length <= actualIndex) {
+			throw new MissingCommandArgException(command, indexType, index);
+		}
+		if (actualIndex < 0) {
+			int min = -indexOffset;
+			int max = arguments.length - indexOffset;
+			throw new IndexOutOfBoundsException("Index " + index + " out of bounds [" + min + ", " + max + "]");
+		}
+		return actualIndex;
 	}
 
 	protected CommandNode<?> getCommand() {
@@ -54,17 +68,13 @@ public class CommandArguments {
 	}
 
 	public String get(int index) throws MissingCommandArgException {
-		if (arguments.length <= index) {
-			throw new MissingCommandArgException(command, String.class, index);
-		}
-		return arguments[index];
+		int actualIndex = translateIndex(index, String.class);
+		return arguments[actualIndex];
 	}
 
 	public int getInt(int index) throws InvalidCommandArgException {
-		if (arguments.length <= index) {
-			throw new MissingCommandArgException(command, Integer.class, index);
-		}
-		String arg = arguments[index];
+		int actualIndex = translateIndex(index, Integer.class);
+		String arg = arguments[actualIndex];
 		try {
 			return Integer.parseInt(arg);
 		} catch (NumberFormatException ex) {
@@ -73,10 +83,8 @@ public class CommandArguments {
 	}
 
 	public double getDouble(int index) throws InvalidCommandArgException {
-		if (arguments.length <= index) {
-			throw new MissingCommandArgException(command, Double.class, index);
-		}
-		String arg = arguments[index];
+		int actualIndex = translateIndex(index, Double.class);
+		String arg = arguments[actualIndex];
 		try {
 			return Double.parseDouble(arg);
 		} catch (NumberFormatException ex) {
@@ -85,10 +93,8 @@ public class CommandArguments {
 	}
 
 	public <T extends Enum<?>> T getEnum(int index, Class<T> enumType) throws InvalidCommandArgException {
-		if (arguments.length <= index) {
-			throw new MissingCommandArgException(command, enumType, index);
-		}
-		String name = arguments[index];
+		int actualIndex = translateIndex(index, enumType);
+		String name = arguments[actualIndex];
 		T[] values = EnumUtil.getValues(enumType);
 		for (T t : values) {
 			if (t.name().equalsIgnoreCase(name)) {
@@ -98,35 +104,17 @@ public class CommandArguments {
 		throw new InvalidCommandArgException(this.command, enumType, name);
 	}
 
-	public String getJoinedString(int startIndex) throws InvalidCommandArgException {
-		if (arguments.length <= startIndex) {
-			throw new MissingCommandArgException(command, String.class, startIndex);
-		}
-
-		StringBuilder str = new StringBuilder();
-		for (int index = startIndex; index < arguments.length; index++) {
-			str.append(arguments[index]);
-			str.append(" ");
-		}
-		return str.toString().trim();
-	}
-
 	public String join(String delimiter) throws InvalidCommandArgException {
-		if (arguments.length == 0) {
-			throw new MissingCommandArgException(command, String.class, 0);
-		}
-		return String.join(delimiter, arguments);
+		return join(delimiter, 0);
 	}
 
-	public String join(String delimiter, int from) throws InvalidCommandArgException {
-		if (arguments.length <= from) {
-			throw new MissingCommandArgException(command, String.class, from);
-		}
-		return String.join(delimiter, Arrays.copyOfRange(arguments, from, arguments.length));
+	public String join(String delimiter, int start) throws InvalidCommandArgException {
+		int actualIndex = translateIndex(start, String.class);
+		return String.join(delimiter, Arrays.copyOfRange(arguments, actualIndex, arguments.length));
 	}
 
-	public String join(int from) throws InvalidCommandArgException {
-		return this.join(" ", from);
+	public String join(int start) throws InvalidCommandArgException {
+		return this.join(" ", start);
 	}
 
 	public String join() throws InvalidCommandArgException {
@@ -140,7 +128,8 @@ public class CommandArguments {
 	 * @return <code>true</code> if the index is present and not out of bounds
 	 */
 	public boolean isPresent(int index) {
-		return index < arguments.length;
+		int actualIndex = index + indexOffset;
+		return actualIndex >= 0 && actualIndex < arguments.length;
 	}
 
 	/**
@@ -161,7 +150,7 @@ public class CommandArguments {
 		}
 
 		try {
-			return getString(index).equalsIgnoreCase(str);
+			return get(index).equalsIgnoreCase(str);
 		} catch (InvalidCommandArgException e) {
 			// this should never happen, hopefully
 			throw new RuntimeException("command index out of bounds: " + index);
@@ -184,7 +173,7 @@ public class CommandArguments {
 		}
 
 		try {
-			return getString(index).equals(str);
+			return get(index).equals(str);
 		} catch (InvalidCommandArgException e) {
 			// this should never happen, hopefully
 			throw new RuntimeException("command index out of bounds: " + index);
@@ -206,7 +195,7 @@ public class CommandArguments {
 	 * @throws MissingCommandArgException if the index is out of bounds
 	 */
 	public boolean check(int index, String str) throws MissingCommandArgException {
-		return getString(index).equalsIgnoreCase(str);
+		return get(index).equalsIgnoreCase(str);
 	}
 
 	/**
@@ -221,15 +210,15 @@ public class CommandArguments {
 	 * @throws MissingCommandArgException if the index is out of bounds
 	 */
 	public boolean checkWithCase(int index, String str) throws MissingCommandArgException {
-		return getString(index).equals(str);
+		return get(index).equals(str);
 	}
 
-	protected String[] getArguments() {
-		return arguments;
+	public String[] toArray() {
+		return Arrays.copyOfRange(arguments, indexOffset, arguments.length);
 	}
 
 	public int length() {
-		return this.arguments.length;
+		return this.arguments.length - indexOffset;
 	}
 
 	@Override

@@ -20,10 +20,10 @@ public class Arguments extends CommandArguments {
 	}
 
 	public Player getPlayer(int index) throws CommandFailException {
-		if (getArguments().length <= index) {
+		if (!isPresent(index)) {
 			throw new MissingCommandArgException(getCommand(), Player.class, index);
 		}
-		String arg = getArguments()[index];
+		String arg = get(index);
 		Player player = Bukkit.getPlayer(arg);
 		if (arg == null) {
 			throw new InvalidCommandArgException(getCommand(), Player.class, arg);

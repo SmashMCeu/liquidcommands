@@ -19,10 +19,10 @@ public class ProxyArguments extends CommandArguments {
 	}
 
 	public ProxiedPlayer getPlayer(int index) throws CommandFailException {
-		if (getArguments().length <= index) {
+		if (!isPresent(index)) {
 			throw new MissingCommandArgException(getCommand(), ProxiedPlayer.class, index);
 		}
-		String arg = getArguments()[index];
+		String arg = get(index);
 		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(arg);
 		if (arg == null) {
 			throw new InvalidCommandArgException(getCommand(), ProxiedPlayer.class, arg);
