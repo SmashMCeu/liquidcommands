@@ -16,32 +16,56 @@ public class CommandArguments {
 
 	private final String[] arguments;
 	private CommandNode<?> command;
-	private int indexOffset;
+	private int offset;
 
 	protected CommandArguments(CommandNode<?> command, String[] arguments) {
 		Preconditions.checkNotNull(command, "command must not be null");
 		Preconditions.checkNotNull(arguments, "arguments must not be null");
 		this.command = command;
 		this.arguments = arguments;
+		this.offset = 0;
 	}
 
 	/**
 	 * Skips to next index.
+	 * 
+	 * @param next How far should be skipped?
 	 */
-	protected CommandArguments next(CommandNode<?> nextNode) {
-		this.indexOffset++;
+	protected CommandArguments next(CommandNode<?> nextNode, int next) {
+		this.offset += next;
 		this.command = nextNode;
 		return this;
 	}
 
+	/**
+	 * Checks if the given index is present.
+	 * 
+	 * @param index command argument index to be checked
+	 * @return <code>true</code> if the index is present and not out of bounds
+	 */
+	public boolean isPresent(int index) {
+		int actualIndex = index + offset;
+		if (actualIndex < offset) {
+			// For a more simple usage we will ignore the current index as an argument
+			actualIndex--;
+		}
+		return actualIndex >= 0 && actualIndex < arguments.length;
+	}
+
 	protected int translateIndex(int index, Class<?> indexType) throws MissingCommandArgException {
-		int actualIndex = index + indexOffset;
+		int actualIndex = index + offset;
+		if (index < 0) {
+			// For a more simple usage we will ignore the current index as an argument
+			actualIndex--;
+		}
 		if (arguments.length <= actualIndex) {
 			throw new MissingCommandArgException(command, indexType, index);
 		}
 		if (actualIndex < 0) {
-			int min = -indexOffset;
-			int max = arguments.length - indexOffset;
+			// A little bit more complex because we want to ignore the current index as a
+			// previous argument, thus needing us to add/substract 1 from min an max.
+			int min = -offset + 1;
+			int max = arguments.length - offset - 1;
 			throw new IndexOutOfBoundsException("Index " + index + " out of bounds [" + min + ", " + max + "]");
 		}
 		return actualIndex;
@@ -49,10 +73,6 @@ public class CommandArguments {
 
 	protected CommandNode<?> getCommand() {
 		return command;
-	}
-
-	public CommandArguments copyOfRange(int from, int to) {
-		return CommandArguments.fromStrings(this.command, Arrays.copyOfRange(arguments, from, to));
 	}
 
 	/**
@@ -119,17 +139,6 @@ public class CommandArguments {
 
 	public String join() throws InvalidCommandArgException {
 		return this.join(" ");
-	}
-
-	/**
-	 * Checks if the given index is present.
-	 * 
-	 * @param index command argument index to be checked
-	 * @return <code>true</code> if the index is present and not out of bounds
-	 */
-	public boolean isPresent(int index) {
-		int actualIndex = index + indexOffset;
-		return actualIndex >= 0 && actualIndex < arguments.length;
 	}
 
 	/**
@@ -214,11 +223,11 @@ public class CommandArguments {
 	}
 
 	public String[] toArray() {
-		return Arrays.copyOfRange(arguments, indexOffset, arguments.length);
+		return Arrays.copyOfRange(arguments, offset, arguments.length);
 	}
 
 	public int length() {
-		return this.arguments.length - indexOffset;
+		return this.arguments.length - offset;
 	}
 
 	@Override

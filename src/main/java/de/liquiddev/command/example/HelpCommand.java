@@ -106,7 +106,7 @@ public class HelpCommand extends CommandChild {
 			message.append("\n");
 		}
 
-		for (CommandNode<?> cmd : command.getSubCommands()) {
+		for (CommandNode<?> cmd : command.getSubCommands(0)) {
 			if (!cmd.isHelpVisible()) {
 				continue;
 			}
@@ -127,7 +127,7 @@ public class HelpCommand extends CommandChild {
 	public boolean hasPermission(AbstractCommandSender sender) {
 		boolean anyPermission = !checkPermission;
 		if (checkPermission) {
-			for (CommandNode<?> cmd : command.getSubCommands()) {
+			for (CommandNode<?> cmd : command.getSubCommands(0)) {
 				if (cmd.isHelpVisible() && cmd.hasPermission(sender)) {
 					anyPermission = true;
 					break;

@@ -22,7 +22,7 @@ import de.liquiddev.command.ratelimit.RateLimiter;
 
 public abstract class CommandNode<T> {
 
-	private Collection<CommandChild<? extends T>> subCommands = new LinkedList<>();
+	private Map<Integer, Collection<CommandChild<? extends T>>> subCommandMap = new HashMap<>();
 	private Map<Integer, Autocompleter<? super T>> autocompleters = new HashMap<>(0);
 
 	private Class<T> senderType;
@@ -58,19 +58,19 @@ public abstract class CommandNode<T> {
 			throw new CommandRateLimitExceededException(this);
 		}
 
-		if (args.length() > 0) {
-			CommandChild<? extends T> subCommand = getSubCommand(args.get(0));
+		for (int i = 0; i < args.length(); i++) {
+			String qualifier = args.get(i); // the name of the sub command
+			CommandChild<? extends T> subCommand = getSubCommand(i, qualifier);
 			if (subCommand != null) {
 				AbstractCommandSender typelessSender = (AbstractCommandSender) sender;
 				Class<? extends T> targetType = subCommand.getSenderType();
 				if (!targetType.isInstance(sender.getSender())) {
 					throw new CommandSenderException(subCommand, targetType);
 				}
-				subCommand.executeCommand(typelessSender, args.next(subCommand));
+				subCommand.executeCommand(typelessSender, args.next(subCommand, i + 1));
 				return;
 			}
 		}
-
 		this.onCommand(sender, args);
 	}
 
@@ -101,8 +101,9 @@ public abstract class CommandNode<T> {
 		int index = args.length - 1;
 		String currentArg = args[index].toLowerCase();
 
-		if (index == 0) {
-			for (CommandChild<?> child : subCommands) {
+		// Autocomplete subcommand names
+		if (subCommandMap.containsKey(index)) {
+			for (CommandChild<?> child : subCommandMap.get(index)) {
 				if (child.isAutocompleteVisible()) {
 					if (child.getName().toLowerCase().startsWith(currentArg)) {
 						if (child.hasPermission(sender)) {
@@ -111,16 +112,22 @@ public abstract class CommandNode<T> {
 					}
 				}
 			}
-		} else {
-			CommandChild<? extends T> subCommand = getSubCommand(args[0]);
-			if (subCommand != null) {
-				String[] argsCopy = Arrays.copyOfRange(args, 1, args.length);
-				AbstractCommandSender typelessSender = (AbstractCommandSender) sender;
-				Class<? extends T> targetType = subCommand.getSenderType();
-				if (!targetType.isInstance(sender.getSender())) {
-					return Collections.emptyList();
+		}
+		// Let the subcommands autocomplete
+		else {
+			// Find first subcommand to delegate to
+			for (int i = 0; i < args.length; i++) {
+				String qualifier = args[i];
+				CommandChild<? extends T> subCommand = getSubCommand(i, qualifier);
+				if (subCommand != null) {
+					String[] argsCopy = Arrays.copyOfRange(args, i + 1, args.length);
+					AbstractCommandSender typelessSender = (AbstractCommandSender) sender;
+					Class<? extends T> targetType = subCommand.getSenderType();
+					if (!targetType.isInstance(sender.getSender())) {
+						return Collections.emptyList();
+					}
+					return subCommand.autocomplete(typelessSender, argsCopy);
 				}
-				return subCommand.autocomplete(typelessSender, argsCopy);
 			}
 		}
 
@@ -156,12 +163,26 @@ public abstract class CommandNode<T> {
 	}
 
 	public void addSubCommand(CommandChild<? extends T> subCommand) {
-		subCommand.setParent(this);
-		this.subCommands.add(subCommand);
+		this.addSubCommand(0, subCommand);
 	}
 
-	private CommandChild<? extends T> getSubCommand(String name) {
-		for (CommandChild<? extends T> command : subCommands) {
+	public void addSubCommand(int index, CommandChild<? extends T> subCommand) {
+		subCommand.setParent(this);
+		Collection<CommandChild<? extends T>> sub = subCommandMap.get(index);
+		if (sub == null) {
+			sub = new LinkedList<>();
+			subCommandMap.put(index, sub);
+		}
+		sub.add(subCommand);
+	}
+
+	@Nullable
+	private CommandChild<? extends T> getSubCommand(int index, String name) {
+		Collection<CommandChild<? extends T>> sub = subCommandMap.get(index);
+		if (sub == null) {
+			return null;
+		}
+		for (CommandChild<? extends T> command : sub) {
 			if (command.getName().equalsIgnoreCase(name)) {
 				return command;
 			}
@@ -254,8 +275,12 @@ public abstract class CommandNode<T> {
 		return senderType;
 	}
 
-	public Collection<CommandChild<? extends T>> getSubCommands() {
-		return subCommands.stream().collect(Collectors.toList());
+	public Collection<CommandChild<? extends T>> getSubCommands(int index) {
+		if (subCommandMap.containsKey(index)) {
+			return subCommandMap.get(index).stream().collect(Collectors.toList());
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	public String getUsage() {
