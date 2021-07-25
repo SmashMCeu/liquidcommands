@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 import de.liquiddev.command.autocomplete.Autocompleter;
+import de.liquiddev.command.context.CommandContext;
 import de.liquiddev.command.example.ReportErrorsCommand;
 import de.liquiddev.command.ratelimit.CommandRateLimitExceededException;
 import de.liquiddev.util.common.CollectionUtil;
@@ -17,6 +18,7 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 	private CommandFailHandler<T> failHandler;
 	private ErrorReporter errorReporter;
 	private String prefix;
+	private CommandContext context;
 
 	public CommandRoot(Class<T> senderType, String name, String hint) {
 		this(senderType, name, hint, "");
@@ -29,6 +31,7 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 		this.errorReporter = ErrorReporter.getDefaultReporter();
 		this.addSubCommand(new ReportErrorsCommand(this));
 		this.prefix = prefix;
+		this.context = new CommandContext(this);
 	}
 
 	@Override
@@ -115,5 +118,10 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 	public void setPrefix(String prefix) {
 		Preconditions.checkNotNull(prefix, "prefix must not be null");
 		this.prefix = prefix;
+	}
+
+	@Override
+	protected CommandContext context() {
+		return this.context;
 	}
 }

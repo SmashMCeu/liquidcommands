@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
 import de.liquiddev.command.autocomplete.Autocomplete;
 import de.liquiddev.command.autocomplete.Autocompleter;
+import de.liquiddev.command.context.CommandContext;
 import de.liquiddev.command.example.HelpCommand;
 import de.liquiddev.command.ratelimit.CommandRateLimitExceededException;
 import de.liquiddev.command.ratelimit.RateLimit;
@@ -287,9 +289,38 @@ public abstract class CommandNode<T> {
 		return this.getAbsoluteName() + (this.hint.length() > 0 ? " " + this.hint : "");
 	}
 
+	/**
+	 * Adds a context to the commands root. This can be retrieved with getContext()
+	 * by all childs of the same root.
+	 * 
+	 * @param <C>     generic type of the context class
+	 * @param type    class type of the context
+	 * @param context the context instance
+	 * @throws IllegalStateException if context of that type is already registered
+	 */
+	public <C> void addContext(Class<C> type, C context) throws IllegalStateException {
+		this.context().addContext(type, context);
+	}
+
+	/**
+	 * Retrieve a context by it's class type.
+	 * 
+	 * @param <C>  generic type of the context class
+	 * @param type class type of the context
+	 * @return the context instance
+	 * @throws IllegalArgumentException if no context of that type is found in the
+	 *                                  command root
+	 */
+	@Nonnull
+	public <C> C getContext(Class<C> type) throws IllegalArgumentException {
+		return this.context().getContext(type);
+	}
+
 	public abstract String getAbsoluteName();
 
 	public abstract String getPrefix();
+
+	protected abstract CommandContext context();
 
 	protected abstract void onCommand(AbstractCommandSender<T> sender, CommandArguments args) throws CommandFailException;
 }
