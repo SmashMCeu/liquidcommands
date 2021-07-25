@@ -36,6 +36,16 @@ public class QuickCommand {
 		return this;
 	}
 
+	public QuickCommand hint(String hint) {
+		this.hint = hint;
+		return this;
+	}
+
+	public QuickCommand permission(String permission) {
+		this.permission = permission;
+		return this;
+	}
+
 	public QuickCommand alias(String... aliases) {
 		this.alias = aliases;
 		return this;
