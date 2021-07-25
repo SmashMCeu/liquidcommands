@@ -6,6 +6,7 @@
 * Variable arguments
 * Rate limit / cooldown system
 * Bukkit, Bungeecord & Velocity support
+* QuickCommands as one-liner
 
 ## Future plans / ideas
-- Functional commands as one-liner
+- /
