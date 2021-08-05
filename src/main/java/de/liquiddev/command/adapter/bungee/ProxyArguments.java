@@ -24,7 +24,7 @@ public class ProxyArguments extends CommandArguments {
 		}
 		String arg = get(index);
 		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(arg);
-		if (arg == null) {
+		if (player == null) {
 			throw new InvalidCommandArgException(getCommand(), ProxiedPlayer.class, arg);
 		}
 		return player;

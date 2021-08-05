@@ -25,7 +25,7 @@ public class Arguments extends CommandArguments {
 		}
 		String arg = get(index);
 		Player player = Bukkit.getPlayer(arg);
-		if (arg == null) {
+		if (player == null) {
 			throw new InvalidCommandArgException(getCommand(), Player.class, arg);
 		}
 		return player;
