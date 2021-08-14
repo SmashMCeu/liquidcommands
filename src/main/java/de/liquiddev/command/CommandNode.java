@@ -286,7 +286,8 @@ public abstract class CommandNode<T> {
 	}
 
 	public String getUsage() {
-		return this.getAbsoluteName() + (this.hint.length() > 0 ? " " + this.hint : "");
+		String hint = this.getHint(); // Use getter so child classes can override
+		return this.getAbsoluteName() + (hint.length() > 0 ? " " + hint : "");
 	}
 
 	/**
