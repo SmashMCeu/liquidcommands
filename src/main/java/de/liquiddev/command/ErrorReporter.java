@@ -1,5 +1,8 @@
 package de.liquiddev.command;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.common.base.Preconditions;
 
 /**
@@ -30,7 +33,8 @@ public abstract class ErrorReporter {
 
 		@Override
 		public void reportError(Class<?> clazz, Exception ex, String string) {
-			ex.printStackTrace();
+			Logger logger = Logger.getLogger(clazz.getName());
+			logger.log(Level.SEVERE, "command execution failed", ex);
 		}
 	}
 }

@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import de.liquiddev.command.AbstractCommandSender;
 import de.liquiddev.command.CommandArguments;
 import de.liquiddev.command.CommandRoot;
+import de.liquiddev.command.ErrorReporter;
 
 public abstract class AbstractCommandAdapter<T> {
 
@@ -23,11 +24,8 @@ public abstract class AbstractCommandAdapter<T> {
 		try {
 			command.executeCommand(abstractSender, getArguments(args));
 		} catch (Exception ex) {
-			if (command.getErrorReporter() != null) {
-				command.getErrorReporter().reportError(this.getClass(), ex, "error executing command: /" + command.getName() + " " + String.join(" ", args));
-			} else {
-				ex.printStackTrace();
-			}
+			ErrorReporter reporter = command.getErrorReporter();
+			reporter.reportError(this.getClass(), ex, "error executing command: /" + command.getName() + " " + String.join(" ", args));
 			abstractSender.sendMessage("§cThe command execution failed. Please contact an administrator.");
 		}
 	}
@@ -37,11 +35,8 @@ public abstract class AbstractCommandAdapter<T> {
 		try {
 			return command.autocomplete(abstractSender, args);
 		} catch (Exception ex) {
-			if (command.getErrorReporter() != null) {
-				command.getErrorReporter().reportError(this.getClass(), ex, "error autocompleting command: /" + command.getName() + " " + String.join(" ", args));
-			} else {
-				ex.printStackTrace();
-			}
+			ErrorReporter reporter = command.getErrorReporter();
+			reporter.reportError(this.getClass(), ex, "error autocompleting command: /" + command.getName() + " " + String.join(" ", args));
 			abstractSender.sendMessage("§cSomething went wrong. Please contact an administrator.");
 			return Collections.emptyList();
 		}
