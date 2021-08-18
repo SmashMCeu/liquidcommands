@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 
@@ -312,7 +311,6 @@ public abstract class CommandNode<T> {
 	 * @throws IllegalArgumentException if no context of that type is found in the
 	 *                                  command root
 	 */
-	@Nonnull
 	public <C> C getContext(Class<C> type) throws IllegalArgumentException {
 		return this.context().getContext(type);
 	}

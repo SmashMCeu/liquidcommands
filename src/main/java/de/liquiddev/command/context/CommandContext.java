@@ -3,8 +3,6 @@ package de.liquiddev.command.context;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
 import de.liquiddev.command.CommandRoot;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,6 @@ public class CommandContext {
 		return contextMap.containsKey(type);
 	}
 
-	@Nonnull
 	public <T> T getContext(Class<T> type) throws IllegalArgumentException {
 		Object ctx = contextMap.get(type);
 		if (ctx == null) {

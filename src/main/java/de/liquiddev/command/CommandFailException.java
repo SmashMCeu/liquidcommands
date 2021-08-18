@@ -1,6 +1,6 @@
 package de.liquiddev.command;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 

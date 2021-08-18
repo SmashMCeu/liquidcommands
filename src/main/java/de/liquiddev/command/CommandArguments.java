@@ -2,8 +2,6 @@ package de.liquiddev.command;
 
 import java.util.Arrays;
 
-import org.bukkit.craftbukkit.libs.joptsimple.internal.Strings;
-
 import com.google.common.base.Preconditions;
 
 import de.liquiddev.util.common.EnumUtil;
@@ -232,6 +230,6 @@ public class CommandArguments {
 
 	@Override
 	public String toString() {
-		return Strings.join(arguments, " ");
+		return String.join(" ", arguments);
 	}
 }
