@@ -14,8 +14,8 @@
 
 	<repositories>
 		<repository>
-			<id>smashmc</id>
-			<url>https://repo.smashmc.eu/</url>
+			<id>smashmc-public</id>
+			<url>https://repo.smashmc.eu/public</url>
 		</repository>
 		<repository>
 			<id>papermc</id>
@@ -25,9 +25,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot</artifactId>
-			<version>1.12.2</version>
+			<groupId>io.papermc.paper</groupId>
+			<artifactId>paper-api</artifactId>
+			<version>1.17.1-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -71,8 +71,8 @@
 
 	<distributionManagement>
 		<repository>
-			<id>smashmc</id>
-			<url>https://repo.smashmc.eu/smashmc</url>
+			<id>smashmc-public</id>
+			<url>https://repo.smashmc.eu/public</url>
 		</repository>
 	</distributionManagement>
 </project>
