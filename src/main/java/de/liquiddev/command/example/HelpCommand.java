@@ -1,5 +1,8 @@
 package de.liquiddev.command.example;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 
 import de.liquiddev.command.AbstractCommandSender;
@@ -26,6 +29,7 @@ public class HelpCommand extends CommandChild {
 		private String descriptionFormat = " §8- §7%s";
 		private boolean includeSelf = false;
 		private boolean checkPermission = true;
+		private List<String> customPath = new ArrayList<>(0);
 
 		public HelpCommandBuilder(CommandNode<?> command) {
 			this.command = command;
@@ -61,8 +65,13 @@ public class HelpCommand extends CommandChild {
 			return this;
 		}
 
+		public HelpCommandBuilder addPath(String path) {
+			this.customPath.add(path);
+			return this;
+		}
+
 		public HelpCommand create() {
-			return new HelpCommand(command, includeSelf, checkPermission, header, footer, format, descriptionFormat);
+			return new HelpCommand(command, includeSelf, checkPermission, header, footer, format, descriptionFormat, customPath);
 		}
 	}
 
@@ -73,8 +82,9 @@ public class HelpCommand extends CommandChild {
 	private String footer;
 	private String format;
 	private String descriptionFormat;
+	private List<String> customPathes;
 
-	HelpCommand(CommandNode<?> commandToHelp, boolean includeSelf, boolean checkPermission, String header, String footer, String format, String descFormat) {
+	HelpCommand(CommandNode<?> commandToHelp, boolean includeSelf, boolean checkPermission, String header, String footer, String format, String descFormat, List<String> customPath) {
 		super(Object.class, "help", "");
 		Preconditions.checkNotNull(commandToHelp, "commandToHelp must not be null");
 		Preconditions.checkNotNull(header, "header must not be null");
@@ -90,6 +100,7 @@ public class HelpCommand extends CommandChild {
 		this.footer = footer;
 		this.format = format;
 		this.descriptionFormat = descFormat;
+		this.customPathes = customPath;
 		/* help command should be first in list */
 		this.setVisibility(CommandVisibility.HIDE_HELP);
 	}
@@ -114,6 +125,12 @@ public class HelpCommand extends CommandChild {
 				appendHelp(message, cmd);
 				message.append("\n");
 			}
+		}
+
+		/* Custom pathes */
+		for (String path : customPathes) {
+			appendHelp(message, command.getAbsoluteName(), path, null);
+			message.append("\n");
 		}
 		appendFooter(message);
 		sender.sendMessage(message.toString());
@@ -148,11 +165,15 @@ public class HelpCommand extends CommandChild {
 	}
 
 	protected void appendHelp(StringBuilder str, CommandNode<?> subCommand) {
-		String help = String.format(format, subCommand.getAbsoluteName(), subCommand.getHint());
+		this.appendHelp(str, subCommand.getAbsoluteName(), subCommand.getHint(), subCommand.getDescription());
+	}
+
+	protected void appendHelp(StringBuilder str, String absoluteName, String hint, String description) {
+		String help = String.format(format, absoluteName, hint);
 		str.append(help);
 
-		if (subCommand.getDescription() != null) {
-			String desc = String.format(descriptionFormat, subCommand.getDescription());
+		if (description != null) {
+			String desc = String.format(descriptionFormat, description);
 			str.append(desc);
 		}
 	}
