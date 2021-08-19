@@ -298,7 +298,7 @@ public abstract class CommandNode<T> {
 	 * @param context the context instance
 	 * @throws IllegalStateException if context of that type is already registered
 	 */
-	public <C> void addContext(Class<C> type, C context) throws IllegalStateException {
+	public <C> void setContext(Class<C> type, C context) throws IllegalStateException {
 		this.context().addContext(type, context);
 	}
 
