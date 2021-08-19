@@ -57,5 +57,10 @@ class ProxyCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 			AbstractCommandSender<CommandSender> abstractSender = new ProxyCommandSender<CommandSender>(sender);
 			return getCommand().hasPermission(abstractSender);
 		}
+		
+		@Override
+		public String[] getAliases() {
+			return ProxyCommandAdapter.this.getCommand().getAliases();
+		}
 	}
 }
