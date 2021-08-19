@@ -102,32 +102,32 @@ public abstract class CommandNode<T> {
 		int index = args.length - 1;
 		String currentArg = args[index].toLowerCase();
 
+		// Find subcommand to delegate to
+		for (int i = 0; i < args.length - 1; i++) {
+			String qualifier = args[i];
+			CommandChild<? extends T> subCommand = getSubCommand(i, qualifier);
+			if (subCommand != null) {
+				String[] argsCopy = Arrays.copyOfRange(args, i + 1, args.length);
+				AbstractCommandSender typelessSender = (AbstractCommandSender) sender;
+				Class<? extends T> targetType = subCommand.getSenderType();
+				if (!targetType.isInstance(sender.getSender())) {
+					return Collections.emptyList();
+				}
+				return subCommand.autocomplete(typelessSender, argsCopy);
+			}
+		}
+
 		// Autocomplete subcommand names
 		if (subCommandMap.containsKey(index)) {
 			for (CommandChild<?> child : subCommandMap.get(index)) {
 				if (child.isAutocompleteVisible()) {
-					if (child.getName().toLowerCase().startsWith(currentArg)) {
+					if (child.getName()
+							.toLowerCase()
+							.startsWith(currentArg)) {
 						if (child.hasPermission(sender)) {
 							completions.add(child.getName());
 						}
 					}
-				}
-			}
-		}
-		// Let the subcommands autocomplete
-		else {
-			// Find first subcommand to delegate to
-			for (int i = 0; i < args.length; i++) {
-				String qualifier = args[i];
-				CommandChild<? extends T> subCommand = getSubCommand(i, qualifier);
-				if (subCommand != null) {
-					String[] argsCopy = Arrays.copyOfRange(args, i + 1, args.length);
-					AbstractCommandSender typelessSender = (AbstractCommandSender) sender;
-					Class<? extends T> targetType = subCommand.getSenderType();
-					if (!targetType.isInstance(sender.getSender())) {
-						return Collections.emptyList();
-					}
-					return subCommand.autocomplete(typelessSender, argsCopy);
 				}
 			}
 		}
@@ -184,7 +184,8 @@ public abstract class CommandNode<T> {
 			return null;
 		}
 		for (CommandChild<? extends T> command : sub) {
-			if (command.getName().equalsIgnoreCase(name)) {
+			if (command.getName()
+					.equalsIgnoreCase(name)) {
 				return command;
 			}
 			for (String alias : command.getAliases()) {
@@ -278,7 +279,9 @@ public abstract class CommandNode<T> {
 
 	public Collection<CommandChild<? extends T>> getSubCommands(int index) {
 		if (subCommandMap.containsKey(index)) {
-			return subCommandMap.get(index).stream().collect(Collectors.toList());
+			return subCommandMap.get(index)
+					.stream()
+					.collect(Collectors.toList());
 		} else {
 			return Collections.emptyList();
 		}
@@ -299,7 +302,8 @@ public abstract class CommandNode<T> {
 	 * @throws IllegalStateException if context of that type is already registered
 	 */
 	public <C> void setContext(Class<C> type, C context) throws IllegalStateException {
-		this.context().addContext(type, context);
+		this.context()
+				.addContext(type, context);
 	}
 
 	/**
@@ -312,7 +316,8 @@ public abstract class CommandNode<T> {
 	 *                                  command root
 	 */
 	public <C> C getContext(Class<C> type) throws IllegalArgumentException {
-		return this.context().getContext(type);
+		return this.context()
+				.getContext(type);
 	}
 
 	public abstract String getAbsoluteName();
