@@ -16,10 +16,13 @@ class ProxyCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 	public ProxyCommandAdapter(ProxyCommand<?> proxyCommand, String name, String[] aliases) {
 		super(proxyCommand);
 		this.commandListener = new CommandListener(name, aliases);
+		proxyCommand.setAliases(aliases);
 	}
 
 	public void register(Plugin plugin) {
-		ProxyServer.getInstance().getPluginManager().registerCommand(plugin, commandListener);
+		ProxyServer.getInstance()
+				.getPluginManager()
+				.registerCommand(plugin, commandListener);
 	}
 
 	@Override
@@ -57,10 +60,11 @@ class ProxyCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 			AbstractCommandSender<CommandSender> abstractSender = new ProxyCommandSender<CommandSender>(sender);
 			return getCommand().hasPermission(abstractSender);
 		}
-		
+
 		@Override
 		public String[] getAliases() {
-			return ProxyCommandAdapter.this.getCommand().getAliases();
+			return ProxyCommandAdapter.this.getCommand()
+					.getAliases();
 		}
 	}
 }
