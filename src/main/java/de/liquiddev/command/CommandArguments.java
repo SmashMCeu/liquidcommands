@@ -73,18 +73,6 @@ public class CommandArguments {
 		return command;
 	}
 
-	/**
-	 * {@link Deprecated} use just get() instead.
-	 * 
-	 * @param index deprecated
-	 * @return deprecated
-	 * @throws MissingCommandArgException deprecated
-	 */
-	@Deprecated
-	public String getString(int index) throws MissingCommandArgException {
-		return get(index);
-	}
-
 	public String get(int index) throws MissingCommandArgException {
 		int actualIndex = translateIndex(index, String.class);
 		return arguments[actualIndex];
@@ -115,7 +103,8 @@ public class CommandArguments {
 		String name = arguments[actualIndex];
 		T[] values = EnumUtil.getValues(enumType);
 		for (T t : values) {
-			if (t.name().equalsIgnoreCase(name)) {
+			if (t.name()
+					.equalsIgnoreCase(name)) {
 				return t;
 			}
 		}
