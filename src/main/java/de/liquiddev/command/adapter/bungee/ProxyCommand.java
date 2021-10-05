@@ -16,10 +16,6 @@ public abstract class ProxyCommand<T extends CommandSender> extends CommandRoot<
 		this.adapter = new ProxyCommandAdapter(this, name, aliases);
 	}
 
-	public ProxyCommand(Class<T> senderType, String name, String hint, String... aliases) {
-		this("", senderType, name, hint, aliases);
-	}
-
 	public void register(Plugin plugin) {
 		adapter.register(plugin);
 	}
