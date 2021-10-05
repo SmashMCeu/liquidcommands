@@ -13,7 +13,7 @@
 <dependency>
 	<groupId>de.liquiddev</groupId>
 	<artifactId>command</artifactId>
-	<version>1.0.1</version>
+	<version>1.1.0</version>
 </dependency>
 ```
 
@@ -27,6 +27,10 @@
 * Command context
 
 ## Code snippets
+
+### Register a command
+To register a command, just use```command.register(plugin);```
+There is no need to add them to the plugin.yml.
 
 ### Quick bukkit command
 ```
@@ -44,7 +48,7 @@ QuickCommand.name("examplecommand")
 public class ExampleBukkitCommand extends PlayerCommand {
 
 	public ExampleBukkitCommand() {
-		super("ExampleBukkitCommand", "examplecommand", "<player>");
+		super("§cExample: ", "examplecommand", "<player>");
 		this.addAlias("example");
 		this.setPermission("example.command");
 		this.setAutocompleter(0, Autocomplete.players());
@@ -65,7 +69,7 @@ public class ExampleBukkitCommand extends PlayerCommand {
 public class ExampleBungeeCommand extends ProxyCommand<CommandSender> {
 
 	public ExampleBungeeCommand() {
-		super("ExampleCommand", CommandSender.class, "examplecommand", "<player>");
+		super("§cExample: ", CommandSender.class, "examplecommand", "<player>");
 		this.addAlias("example");
 		this.setPermission("example.command");
 		this.setAutocompleter(0, Autocomplete.proxyPlayers());
@@ -76,7 +80,7 @@ public class ExampleBungeeCommand extends ProxyCommand<CommandSender> {
 	protected void onCommand(CommandSender sender, ProxyArguments args) throws CommandFailException {
 		ProxiedPlayer target = args.getPlayer(0);
 		target.sendMessage(getPrefix() + "Hey, " + sender.getName() + " poked you!");
-		sender.sendMessage("You poked " + target.getName());
+		sender.sendMessage(getPrefix() + "You poked " + target.getName());
 	}
 }
 ```
