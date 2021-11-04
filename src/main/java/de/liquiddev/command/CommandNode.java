@@ -205,14 +205,24 @@ public abstract class CommandNode<T> {
 		return aliases;
 	}
 
-	public void setAliases(String[] aliases) {
+	public void setAliases(String... aliases) {
 		Preconditions.checkNotNull(aliases, "aliases must not be null");
 		this.aliases = aliases;
 	}
 
 	public void addAlias(String alias) {
+		Preconditions.checkNotNull(aliases, "alias must not be null");
 		String[] arr = Arrays.copyOf(aliases, aliases.length + 1);
 		arr[arr.length - 1] = alias;
+		this.aliases = arr;
+	}
+
+	public void addAliases(String... aliasArr) {
+		Preconditions.checkNotNull(aliases, "aliases must not be null");
+		String[] arr = Arrays.copyOf(this.aliases, this.aliases.length + aliasArr.length);
+		for (int i = 0; i < aliasArr.length; i++) {
+			arr[arr.length - aliasArr.length + i] = aliasArr[i];
+		}
 		this.aliases = arr;
 	}
 
