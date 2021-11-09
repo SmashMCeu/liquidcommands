@@ -78,6 +78,14 @@ public class CommandArguments {
 		return arguments[actualIndex];
 	}
 
+	public String getOrElse(int index, String defaultVal) {
+		try {
+			return isPresent(index) ? get(index) : defaultVal;
+		} catch (MissingCommandArgException e) {
+			throw new RuntimeException("if you see this, something went horribly wrong", e);
+		}
+	}
+
 	public int getInt(int index) throws InvalidCommandArgException {
 		int actualIndex = translateIndex(index, Integer.class);
 		String arg = arguments[actualIndex];
