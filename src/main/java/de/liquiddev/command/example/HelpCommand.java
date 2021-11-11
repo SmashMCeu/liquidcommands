@@ -23,16 +23,30 @@ public class HelpCommand extends CommandChild {
 	public static class HelpCommandBuilder {
 
 		private final CommandNode<?> command;
-		private String header = "§8╔═════════════════════════╗\n";
-		private String footer = "\n§8╚═════════════════════════╝";
-		private String format = " §8● §b%s §f%s";
-		private String descriptionFormat = " §8- §7%s";
+		private String header;
+		private String footer;
+		private String format;
+		private String descriptionFormat;
 		private boolean includeSelf = false;
 		private boolean checkPermission = true;
 		private List<String> customPath = new ArrayList<>(0);
 
 		public HelpCommandBuilder(CommandNode<?> command) {
 			this.command = command;
+
+			/* Default style */
+			String name = command.getName();
+			name = name.substring(0, 1)
+					.toUpperCase() + name.substring(1);
+			defaultFormat(name, "§3", "§b");
+		}
+
+		public HelpCommandBuilder defaultFormat(String commandHelpName, String darkColor, String lightColor) {
+			header = "§7§m|一一一一一一一一一一一" + darkColor + "§l " + commandHelpName + " §7§m一一一一一一一一一一一|§r\n ";
+			footer = " ";
+			format = " §8● " + lightColor + "%s §7%s";
+			descriptionFormat = " §8- §7%s";
+			return this;
 		}
 
 		public HelpCommandBuilder header(String header) {
