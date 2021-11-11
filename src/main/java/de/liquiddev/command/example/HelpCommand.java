@@ -44,7 +44,7 @@ public class HelpCommand extends CommandChild {
 		public HelpCommandBuilder defaultFormat(String commandHelpName, String darkColor, String lightColor) {
 			header = "§7§m|一一一一一一一一一一一" + darkColor + "§l " + commandHelpName + " §7§m一一一一一一一一一一一|§r\n ";
 			footer = " ";
-			format = " §8● " + lightColor + "%s §7%s";
+			format = " §8● " + lightColor + "%s §f%s";
 			descriptionFormat = " §8- §7%s";
 			return this;
 		}
