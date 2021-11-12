@@ -26,7 +26,7 @@ public abstract class AbstractCommandAdapter<T> {
 		} catch (Exception ex) {
 			ErrorReporter reporter = command.getErrorReporter();
 			reporter.reportError(this.getClass(), ex, "error executing command: /" + command.getName() + " " + String.join(" ", args));
-			abstractSender.sendMessage("§cThe command execution failed. Please contact an administrator.");
+			abstractSender.sendMessage(command.getPrefix() + "§cThe command execution failed. Please contact an administrator.");
 		}
 	}
 
@@ -37,7 +37,7 @@ public abstract class AbstractCommandAdapter<T> {
 		} catch (Exception ex) {
 			ErrorReporter reporter = command.getErrorReporter();
 			reporter.reportError(this.getClass(), ex, "error autocompleting command: /" + command.getName() + " " + String.join(" ", args));
-			abstractSender.sendMessage("§cSomething went wrong. Please contact an administrator.");
+			abstractSender.sendMessage(command.getPrefix() + "§cSomething went wrong. Please contact an administrator.");
 			return Collections.emptyList();
 		}
 	}
