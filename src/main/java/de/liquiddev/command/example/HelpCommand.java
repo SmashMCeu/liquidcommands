@@ -1,6 +1,7 @@
 package de.liquiddev.command.example;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -22,7 +23,7 @@ public class HelpCommand extends CommandChild {
 
 	public static class HelpCommandBuilder {
 
-		private final CommandNode<?> command;
+		private final List<CommandNode<?>> commands;
 		private String header;
 		private String footer;
 		private String format;
@@ -32,7 +33,8 @@ public class HelpCommand extends CommandChild {
 		private List<String> customPath = new ArrayList<>(0);
 
 		public HelpCommandBuilder(CommandNode<?> command) {
-			this.command = command;
+			this.commands = new ArrayList<>();
+			this.commands.add(command);
 
 			/* Default style */
 			String name = command.getName();
@@ -84,12 +86,17 @@ public class HelpCommand extends CommandChild {
 			return this;
 		}
 
+		public HelpCommandBuilder addCommand(CommandNode<?>... command) {
+			this.commands.addAll(Arrays.asList(command));
+			return this;
+		}
+
 		public HelpCommand create() {
-			return new HelpCommand(command, includeSelf, checkPermission, header, footer, format, descriptionFormat, customPath);
+			return new HelpCommand(commands, includeSelf, checkPermission, header, footer, format, descriptionFormat, customPath);
 		}
 	}
 
-	private final CommandNode<?> command;
+	private final List<CommandNode<?>> commands;
 	private boolean includeSelf;
 	private boolean checkPermission;
 	private String header;
@@ -98,16 +105,17 @@ public class HelpCommand extends CommandChild {
 	private String descriptionFormat;
 	private List<String> customPathes;
 
-	HelpCommand(CommandNode<?> commandToHelp, boolean includeSelf, boolean checkPermission, String header, String footer, String format, String descFormat, List<String> customPath) {
+	HelpCommand(List<CommandNode<?>> commandsToHelp, boolean includeSelf, boolean checkPermission, String header, String footer, String format, String descFormat, List<String> customPath) {
 		super(Object.class, "help", "");
-		Preconditions.checkNotNull(commandToHelp, "commandToHelp must not be null");
+		Preconditions.checkNotNull(commandsToHelp, "commandsToHelp must not be null");
+		Preconditions.checkState(!commandsToHelp.isEmpty(), "commandsToHelp must not be empty");
 		Preconditions.checkNotNull(header, "header must not be null");
 		Preconditions.checkNotNull(footer, "footer must not be null");
 		Preconditions.checkNotNull(format, "format must not be null");
 		Preconditions.checkNotNull(descFormat, "descFormat must not be null");
 		this.addAlias("h");
 		this.addAlias("?");
-		this.command = commandToHelp;
+		this.commands = commandsToHelp;
 		this.includeSelf = includeSelf;
 		this.checkPermission = checkPermission;
 		this.header = header;
@@ -127,23 +135,26 @@ public class HelpCommand extends CommandChild {
 
 		/* help command should be first in list */
 		if (includeSelf) {
-			appendHelp(message, this.command);
+			appendHelp(message, this.commands.get(0));
 			message.append("\n");
 		}
 
-		for (CommandNode<?> cmd : command.getSubCommands(0)) {
-			if (!cmd.isHelpVisible()) {
-				continue;
-			}
-			if (!checkPermission || cmd.hasPermission(sender)) {
-				appendHelp(message, cmd);
-				message.append("\n");
+		for (CommandNode<?> command : commands) {
+			for (CommandNode<?> subCommands : command.getSubCommands(0)) {
+				if (!subCommands.isHelpVisible()) {
+					continue;
+				}
+				if (!checkPermission || subCommands.hasPermission(sender)) {
+					appendHelp(message, subCommands);
+					message.append("\n");
+				}
 			}
 		}
 
 		/* Custom pathes */
 		for (String path : customPathes) {
-			appendHelp(message, command.getAbsoluteName(), path, null);
+			appendHelp(message, commands.get(0)
+					.getAbsoluteName(), path, null);
 			message.append("\n");
 		}
 		appendFooter(message);
@@ -158,10 +169,12 @@ public class HelpCommand extends CommandChild {
 	public boolean hasPermission(AbstractCommandSender sender) {
 		boolean anyPermission = !checkPermission;
 		if (checkPermission) {
-			for (CommandNode<?> cmd : command.getSubCommands(0)) {
-				if (cmd.isHelpVisible() && cmd.hasPermission(sender)) {
-					anyPermission = true;
-					break;
+			outer: for (CommandNode<?> command : commands) {
+				for (CommandNode<?> subCommands : command.getSubCommands(0)) {
+					if (subCommands.isHelpVisible() && subCommands.hasPermission(sender)) {
+						anyPermission = true;
+						break outer;
+					}
 				}
 			}
 		} else {
