@@ -139,6 +139,7 @@ public class HelpCommand extends CommandChild {
 			message.append("\n");
 		}
 
+		boolean first = true;
 		for (CommandNode<?> command : commands) {
 			for (CommandNode<?> subCommands : command.getSubCommands(0)) {
 				if (!subCommands.isHelpVisible()) {
@@ -148,6 +149,12 @@ public class HelpCommand extends CommandChild {
 					appendHelp(message, subCommands);
 					message.append("\n");
 				}
+			}
+			if (!first) {
+				first = false;
+			} else {
+				appendHelp(message, command);
+				message.append("\n");
 			}
 		}
 
