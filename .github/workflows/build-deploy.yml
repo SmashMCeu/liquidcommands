@@ -1,0 +1,41 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup Maven
+      uses: stCarolas/setup-maven@v4.1
+    
+    
+    - name: Install JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        server-id: smashmc
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+        
+    - name: Build
+      run: mvn -B package --file pom.xml
+       
+    - name: Publish package
+      run: mvn --batch-mode deploy
+      env:
+        MAVEN_USERNAME: ${{ secrets.REPOSILITE_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.REPOSILITE_TOKEN }}
+      
+    - name: Publish artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: commands
+        path: target/*.jar
