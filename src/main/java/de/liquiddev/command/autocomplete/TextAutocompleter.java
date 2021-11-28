@@ -22,15 +22,15 @@ class TextAutocompleter<T> implements Autocompleter<T> {
 	}
 
 	private void setSuggestions(String[] str) {
-		this.suggestions = new String[str.length];
-		for (int i = 0; i < str.length; i++) {
-			this.suggestions[i] = str[i].toLowerCase();
-		}
+		this.suggestions = Arrays.copyOf(str, str.length);
 	}
 
 	@Override
 	public Collection<String> autocomplete(Object sender, String startsWith) {
 		String lowercase = startsWith.toLowerCase();
-		return Arrays.stream(suggestions).filter(str -> str.startsWith(lowercase)).collect(Collectors.toList());
+		return Arrays.stream(suggestions)
+				.filter(str -> str.toLowerCase()
+						.startsWith(lowercase))
+				.collect(Collectors.toList());
 	}
 }
