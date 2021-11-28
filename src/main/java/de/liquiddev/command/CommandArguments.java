@@ -106,6 +106,27 @@ public class CommandArguments {
 		}
 	}
 
+	public boolean getBoolean(int index) throws InvalidCommandArgException {
+		int actualIndex = translateIndex(index, Integer.class);
+		String arg = arguments[actualIndex];
+
+		final String[] trueValues = { "true", "yes", "on", "enable", "enabled", "1" };
+		for (String trueStr : trueValues) {
+			if (trueStr.equalsIgnoreCase(arg)) {
+				return true;
+			}
+		}
+
+		final String[] falseValues = { "false", "no", "off", "disable", "disabled", "0" };
+		for (String falseStr : falseValues) {
+			if (falseStr.equalsIgnoreCase(arg)) {
+				return false;
+			}
+		}
+
+		throw new InvalidCommandArgException(command, Boolean.class, arg);
+	}
+
 	public <T extends Enum<?>> T getEnum(int index, Class<T> enumType) throws InvalidCommandArgException {
 		int actualIndex = translateIndex(index, enumType);
 		String name = arguments[actualIndex];
