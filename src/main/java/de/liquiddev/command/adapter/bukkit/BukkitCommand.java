@@ -16,7 +16,7 @@ abstract class BukkitCommand<T extends CommandSender> extends CommandRoot<T> {
 	public BukkitCommand(Class<T> type, String prefix, String name, String hint) {
 		super(type, name, hint, prefix);
 		this.adapter = new BukkitCommandAdapter(this);
-		this.setDefaultAutocompleter(Autocomplete.players());
+		this.setDefaultAutocompleter(Autocomplete.none());
 	}
 
 	public void register(Plugin plugin) {
