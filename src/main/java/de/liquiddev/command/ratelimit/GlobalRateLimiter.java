@@ -21,4 +21,9 @@ class GlobalRateLimiter implements RateLimiter {
 	public boolean isRateLimited(Object trigger) {
 		return System.currentTimeMillis() - lastAction < timeout;
 	}
+
+	@Override
+	public void reset(Object trigger) {
+		this.lastAction = 0;
+	}
 }

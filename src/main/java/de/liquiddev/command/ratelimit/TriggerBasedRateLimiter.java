@@ -32,7 +32,8 @@ class TriggerBasedRateLimiter implements RateLimiter {
 	}
 
 	private void cleanup() {
-		Iterator<Map.Entry<Object, Long>> itr = lastActions.entrySet().iterator();
+		Iterator<Map.Entry<Object, Long>> itr = lastActions.entrySet()
+				.iterator();
 		while (itr.hasNext()) {
 			Map.Entry<Object, Long> entry = itr.next();
 			long action = entry.getValue();
@@ -40,5 +41,10 @@ class TriggerBasedRateLimiter implements RateLimiter {
 				itr.remove();
 			}
 		}
+	}
+
+	@Override
+	public void reset(Object trigger) {
+		this.lastActions.remove(trigger);
 	}
 }

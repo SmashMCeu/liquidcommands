@@ -19,4 +19,11 @@ public interface RateLimiter {
 	 */
 	public boolean isRateLimited(Object trigger);
 
+	/**
+	 * Resets / clears the rate limit for the given trigger.
+	 * 
+	 * @param trigger to be reset
+	 */
+	void reset(Object trigger);
+
 }

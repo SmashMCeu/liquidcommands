@@ -14,6 +14,10 @@ public class RateLimit {
 		public boolean acquire(Object trigger) {
 			return true;
 		}
+
+		@Override
+		public void reset(Object trigger) {
+		}
 	};
 
 	public static final RateLimiter none() {
