@@ -32,6 +32,9 @@
 To register a command, just use ```command.register(plugin);```
 There is no need to add them to the plugin.yml.
 
+### Set global default prefix
+To change the default chat prefix used for all commands, use `Commands.setDefaultPrefix(...)`.
+
 ### Quick bukkit command
 ```
 QuickCommand.name("examplecommand")
@@ -48,7 +51,7 @@ QuickCommand.name("examplecommand")
 public class ExampleBukkitCommand extends PlayerCommand {
 
 	public ExampleBukkitCommand() {
-		super("§cExample: ", "examplecommand", "<player>");
+		super("examplecommand", "<player>");
 		this.addAlias("example");
 		this.setPermission("example.command");
 		this.setAutocompleter(0, Autocomplete.players());
@@ -69,8 +72,7 @@ public class ExampleBukkitCommand extends PlayerCommand {
 public class ExampleBungeeCommand extends ProxyCommand<CommandSender> {
 
 	public ExampleBungeeCommand() {
-		super("§cExample: ", CommandSender.class, "examplecommand", "<player>");
-		this.addAlias("example");
+		super(CommandSender.class, "examplecommand", "<player>");
 		this.setPermission("example.command");
 		this.setAutocompleter(0, Autocomplete.proxyPlayers());
 		this.setDescription("A simple example command.");
