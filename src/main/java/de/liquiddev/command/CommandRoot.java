@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
+import de.liquiddev.Commands;
 import de.liquiddev.command.autocomplete.Autocompleter;
 import de.liquiddev.command.context.CommandContext;
 import de.liquiddev.command.example.ReportErrorsCommand;
@@ -20,18 +21,19 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 	private String prefix;
 	private CommandContext context;
 
-	public CommandRoot(Class<T> senderType, String name, String hint) {
-		this(senderType, name, hint, "");
+	@Deprecated
+	public CommandRoot(Class<T> senderType, String name, String hint, String prefix) {
+		this(senderType, name, hint);
+		this.setPrefix(prefix);
 	}
 
-	public CommandRoot(Class<T> senderType, String name, String hint, String prefix) {
+	public CommandRoot(Class<T> senderType, String name, String hint) {
 		super(senderType, name, hint);
-		Preconditions.checkNotNull(prefix, "prefix must not be null");
 		this.failHandler = DefaultCommandFailHandler.getDefault();
 		this.errorReporter = ErrorReporter.getDefaultReporter();
 		this.addSubCommand(new ReportErrorsCommand(this));
-		this.prefix = prefix;
 		this.context = new CommandContext(this);
+		this.prefix = Commands.getDefaultPrefix();
 	}
 
 	@Override

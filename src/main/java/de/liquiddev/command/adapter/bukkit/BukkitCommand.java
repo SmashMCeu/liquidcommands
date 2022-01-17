@@ -13,8 +13,15 @@ abstract class BukkitCommand<T extends CommandSender> extends CommandRoot<T> {
 
 	private BukkitCommandAdapter adapter;
 
+	@Deprecated
 	public BukkitCommand(Class<T> type, String prefix, String name, String hint) {
 		super(type, name, hint, prefix);
+		this.adapter = new BukkitCommandAdapter(this);
+		this.setDefaultAutocompleter(Autocomplete.none());
+	}
+
+	public BukkitCommand(Class<T> type, String name, String hint) {
+		super(type, name, hint);
 		this.adapter = new BukkitCommandAdapter(this);
 		this.setDefaultAutocompleter(Autocomplete.none());
 	}

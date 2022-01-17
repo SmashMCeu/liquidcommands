@@ -6,6 +6,7 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import de.liquiddev.Commands;
 import de.liquiddev.command.CommandFailException;
 import de.liquiddev.command.adapter.bukkit.Arguments;
 import de.liquiddev.command.adapter.bukkit.PlayerCommand;
@@ -20,7 +21,7 @@ public class QuickCommand {
 	}
 
 	private final String name;
-	private String prefix = "";
+	private String prefix = Commands.getDefaultPrefix();
 	private String hint = "";
 	private String permission = null;
 	private String[] alias = {};
@@ -62,7 +63,7 @@ public class QuickCommand {
 	}
 
 	public PlayerCommand register(Plugin plugin, QuickCommandExecutor executor) {
-		PlayerCommand command = new PlayerCommand(prefix, name, hint) {
+		PlayerCommand command = new PlayerCommand(name, hint) {
 			@Override
 			protected void onCommand(Player sender, Arguments args) throws CommandFailException {
 				executor.execute(sender, args);
@@ -71,6 +72,7 @@ public class QuickCommand {
 		for (Map.Entry<Integer, Autocompleter<Player>> entry : autocompleters.entrySet()) {
 			command.setAutocompleter(entry.getKey(), entry.getValue());
 		}
+		command.setPrefix(prefix);
 		command.setPermission(permission);
 		command.setAliases(alias);
 		command.setRatelimit(rateLimiter);
