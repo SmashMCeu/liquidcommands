@@ -28,7 +28,7 @@ public class DefaultCommandFailHandler<T> implements CommandFailHandler<T> {
 			Enum<?>[] values = EnumUtil.getValues((Class<Enum<?>>) required);
 			String available = Stream.of(values).map(e -> e.name()).collect(Collectors.joining(", "));
 			sender.sendMessage(command.getPrefix() + "§cInvalid argument: §e" + provided + "§c, available: §e" + available);
-		} else if(required.getClass().getSimpleName().contains("Player")) {
+		} else if(required.getSimpleName().contains("Player")) {
 			sender.sendMessage(command.getPrefix() + "§cPlayer §e" + provided + " §cnot found!");
 		} else {
 			sender.sendMessage(command.getPrefix() + "§cInvalid argument! §e" + provided + " §cis not a " + required.getSimpleName() + "!");

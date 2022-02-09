@@ -15,7 +15,7 @@ public class GermanCommandFailHandler<T> extends DefaultCommandFailHandler<T> {
 			Enum<?>[] values = EnumUtil.getValues((Class<Enum<?>>) required);
 			String available = Stream.of(values).map(e -> e.name()).collect(Collectors.joining(", "));
 			sender.sendMessage(command.getPrefix() + "§cUngültiger Paramter: §e" + provided + "§c, verfügbar: §e" + available);
-		} else if(required.getClass().getSimpleName().contains("Player")) {
+		} else if(required.getSimpleName().contains("Player")) {
 			sender.sendMessage(command.getPrefix() + "§cSpieler §e" + provided + " §cnicht gefunden!");
 		} else {
 			sender.sendMessage(command.getPrefix() + "§cUngültige Parameter! §e" + provided + " §cist kein " + required.getSimpleName() + "!");
