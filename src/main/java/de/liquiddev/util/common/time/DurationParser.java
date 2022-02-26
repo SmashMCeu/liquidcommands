@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Parses durations from a string format.
  * 
- * @author lucko (Luck) <luck@lucko.me>
+ * @author lucko (Luck)
  */
 public final class DurationParser {
 	private DurationParser() {
