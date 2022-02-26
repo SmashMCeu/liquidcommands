@@ -1,10 +1,12 @@
 package de.liquiddev.command;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 import com.google.common.base.Preconditions;
 
 import de.liquiddev.util.common.EnumUtil;
+import de.liquiddev.util.common.time.DurationParser;
 
 public class CommandArguments {
 
@@ -138,6 +140,16 @@ public class CommandArguments {
 			}
 		}
 		throw new InvalidCommandArgException(this.command, enumType, name);
+	}
+
+	public Duration getDuration(int index) throws InvalidCommandArgException {
+		int actualIndex = translateIndex(index, Double.class);
+		String arg = arguments[actualIndex];
+		try {
+			return DurationParser.parseDuration(arg);
+		} catch (IllegalArgumentException ex) {
+			throw new InvalidCommandArgException(this.command, Duration.class, arg);
+		}
 	}
 
 	public String join(String delimiter) throws InvalidCommandArgException {

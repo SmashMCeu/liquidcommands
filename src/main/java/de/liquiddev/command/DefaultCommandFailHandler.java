@@ -1,5 +1,6 @@
 package de.liquiddev.command;
 
+import java.time.Duration;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,11 +25,16 @@ public class DefaultCommandFailHandler<T> implements CommandFailHandler<T> {
 	public void onInvalidArgument(AbstractCommandSender<T> sender, CommandNode<T> command, Class<?> required, String provided) {
 		if (required.equals(Integer.class) || required.equals(Long.class)) {
 			sender.sendMessage(command.getPrefix() + "§cInvalid argument! §e" + provided + " §cis not a number!");
+		} else if (required.equals(Duration.class)) {
+			sender.sendMessage(command.getPrefix() + "§cInvalid time. Example: §e7d30h10m");
 		} else if (required.isEnum()) {
 			Enum<?>[] values = EnumUtil.getValues((Class<Enum<?>>) required);
-			String available = Stream.of(values).map(e -> e.name()).collect(Collectors.joining(", "));
+			String available = Stream.of(values)
+					.map(e -> e.name())
+					.collect(Collectors.joining(", "));
 			sender.sendMessage(command.getPrefix() + "§cInvalid argument: §e" + provided + "§c, available: §e" + available);
-		} else if(required.getSimpleName().contains("Player")) {
+		} else if (required.getSimpleName()
+				.contains("Player")) {
 			sender.sendMessage(command.getPrefix() + "§cPlayer §e" + provided + " §cnot found!");
 		} else {
 			sender.sendMessage(command.getPrefix() + "§cInvalid argument! §e" + provided + " §cis not a " + required.getSimpleName() + "!");

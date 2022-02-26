@@ -1,5 +1,6 @@
 package de.liquiddev.command;
 
+import java.time.Duration;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -11,6 +12,8 @@ public class GermanCommandFailHandler<T> extends DefaultCommandFailHandler<T> {
 	public void onInvalidArgument(AbstractCommandSender<T> sender, CommandNode<T> command, Class<?> required, String provided) {
 		if (required.equals(Integer.class) || required.equals(Long.class)) {
 			sender.sendMessage(command.getPrefix() + "§cUngültige Parameter! §e" + provided + " §cist keine Zahl!");
+		} else if (required.equals(Duration.class)) {
+			sender.sendMessage(command.getPrefix() + "§cUngültige Zeitangabe. Beispiel: §e7d30h10m");
 		} else if (required.isEnum()) {
 			Enum<?>[] values = EnumUtil.getValues((Class<Enum<?>>) required);
 			String available = Stream.of(values).map(e -> e.name()).collect(Collectors.joining(", "));
