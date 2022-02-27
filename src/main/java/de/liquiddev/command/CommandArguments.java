@@ -258,6 +258,10 @@ public class CommandArguments {
 		return this.arguments.length - offset;
 	}
 
+	public boolean isEmpty() {
+		return length() == 0;
+	}
+
 	@Override
 	public String toString() {
 		return String.join(" ", arguments);
