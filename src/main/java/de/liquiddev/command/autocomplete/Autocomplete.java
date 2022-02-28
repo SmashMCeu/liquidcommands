@@ -38,6 +38,14 @@ public class Autocomplete {
 		return new StatelessAutocompleter<>(supplier, mapFunction);
 	}
 
+	public static <T> Autocompleter<T> combine(Autocompleter<? super T>... completors) {
+		CombiningAutocompleter<T> combined = new CombiningAutocompleter<>();
+		for (Autocompleter<? super T> all : completors) {
+			combined.addAutocompleter(all);
+		}
+		return combined;
+	}
+
 	@SuppressWarnings("rawtypes")
 	public static <T> Autocompleter<T> players() {
 		return new PlayerAutocompleter();
