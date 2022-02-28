@@ -11,7 +11,7 @@ import de.liquiddev.command.AbstractCommandSender;
 class PlayerAutocompleter<T extends CommandSender> implements Autocompleter<T> {
 
 	@Override
-	public Collection<String> autocomplete(AbstractCommandSender<? super T> sender, String startsWith) {
+	public Collection<String> autocomplete(AbstractCommandSender<? extends T> sender, String startsWith) {
 		String lowercase = startsWith.toLowerCase();
 		return Bukkit.getOnlinePlayers()
 				.stream()

@@ -19,7 +19,7 @@ public interface Autocompleter<T> {
 	 * @param str    input string to be autocompleted
 	 * @return possible autocompletions
 	 */
-	public Collection<String> autocomplete(AbstractCommandSender<? super T> sender, String str);
+	public Collection<String> autocomplete(AbstractCommandSender<? extends T> sender, String str);
 
 	/**
 	 * Combine the AutoCompleter with another one. This will not mutate the current
@@ -29,7 +29,7 @@ public interface Autocompleter<T> {
 	 * @param other The AutoCompleter to be combined with.
 	 * @return New AutoCompleter that acts like both this and the other combined.
 	 */
-	public default Autocompleter<T> and(Autocompleter<? extends T> other) {
+	public default Autocompleter<T> and(Autocompleter<? super T> other) {
 		CombiningAutocompleter<T> combined = new CombiningAutocompleter<>();
 		combined.addAutocompleter(this);
 		combined.addAutocompleter(other);

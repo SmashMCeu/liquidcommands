@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PermissibleAutocompleter<T> implements Autocompleter<T> {
 
-	private final Autocompleter<? extends T> backingAutocompleter;
+	private final Autocompleter<T> backingAutocompleter;
 
 	private Collection<String> permissions = new HashSet<>(1);
 
@@ -33,7 +33,7 @@ public class PermissibleAutocompleter<T> implements Autocompleter<T> {
 	}
 
 	@Override
-	public Collection<String> autocomplete(AbstractCommandSender<? super T> sender, String str) {
+	public Collection<String> autocomplete(AbstractCommandSender<? extends T> sender, String str) {
 		for (String permission : permissions) {
 			if (!sender.hasPermission(permission)) {
 				return new ArrayList<>(0);
