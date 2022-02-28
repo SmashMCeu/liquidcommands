@@ -20,14 +20,20 @@ public class CombiningAutocompleter<T> implements Autocompleter<T> {
 
 	private Collection<Autocompleter<? super T>> autocompleters = new ArrayList<>(2);
 
+	// mutates
 	public void addAutocompleter(Autocompleter<? super T> autocompleter) {
 		this.autocompleters.add(autocompleter);
 	}
 
+	// not mutating
 	@Override
 	public Autocompleter<T> and(Autocompleter<? super T> other) {
-		this.addAutocompleter(other);
-		return this;
+		CombiningAutocompleter<T> newCompleter = new CombiningAutocompleter<>();
+		newCompleter.getAutocompleters()
+				.addAll(autocompleters);
+		newCompleter.getAutocompleters()
+				.add(other);
+		return newCompleter;
 	}
 
 	@Override
