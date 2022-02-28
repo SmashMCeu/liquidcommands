@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 
+import de.liquiddev.command.AbstractCommandSender;
 import de.liquiddev.util.common.stream.Filters;
 
 /**
@@ -47,11 +48,12 @@ public class StatelessAutocompleter<T> implements Autocompleter {
 		this.supplier = supplier;
 		this.mapper = mapper;
 		/* Reduce multiple predicates to one */
-		this.filters = filters.stream().reduce(x -> true, Predicate::and);
+		this.filters = filters.stream()
+				.reduce(x -> true, Predicate::and);
 	}
 
 	@Override
-	public Collection<String> autocomplete(Object sender, String startsWith) {
+	public Collection<String> autocomplete(AbstractCommandSender sender, String startsWith) {
 		Collection<T> completableObjects = this.supplier.get();
 		Stream<T> completableStream = completableObjects.stream();
 		if (filters != null) {
@@ -62,4 +64,5 @@ public class StatelessAutocompleter<T> implements Autocompleter {
 		Collection<String> suggestions = suggestionsStream.collect(Collectors.toList());
 		return suggestions;
 	}
+
 }

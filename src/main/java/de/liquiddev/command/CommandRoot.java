@@ -71,7 +71,7 @@ public abstract class CommandRoot<T> extends CommandNode<T> {
 		/* Fallback to default tab completer */
 		if (suggestions == null) {
 			if (defaultAutocompleter != null) {
-				Collection<String> defaultSuggestions = defaultAutocompleter.autocomplete(abstractSender.getSender(), args[args.length - 1]);
+				Collection<String> defaultSuggestions = defaultAutocompleter.autocomplete(abstractSender, args[args.length - 1]);
 				suggestions = CollectionUtil.toList(defaultSuggestions);
 			} else {
 				suggestions = Collections.emptyList();

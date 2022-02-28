@@ -3,8 +3,8 @@ package de.liquiddev.command.autocomplete;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.function.BiFunction;
 
+import de.liquiddev.command.AbstractCommandSender;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -19,8 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PermissibleAutocompleter<T> implements Autocompleter<T> {
 
-	private final Autocompleter<? super T> backingAutocompleter;
-	private final BiFunction<? super T, String, Boolean> permissionChecker;
+	private final Autocompleter<? extends T> backingAutocompleter;
 
 	private Collection<String> permissions = new HashSet<>(1);
 
@@ -34,9 +33,9 @@ public class PermissibleAutocompleter<T> implements Autocompleter<T> {
 	}
 
 	@Override
-	public Collection<String> autocomplete(T sender, String str) {
+	public Collection<String> autocomplete(AbstractCommandSender<? super T> sender, String str) {
 		for (String permission : permissions) {
-			if (!permissionChecker.apply(sender, permission)) {
+			if (!sender.hasPermission(permission)) {
 				return new ArrayList<>(0);
 			}
 		}

@@ -139,7 +139,7 @@ public abstract class CommandNode<T> {
 
 		Autocompleter completer = getAutocompleter(index);
 		if (completer != null) {
-			completions.addAll(completer.autocomplete(sender.getSender(), currentArg));
+			completions.addAll(completer.autocomplete(sender, currentArg));
 		}
 		return completions;
 	}

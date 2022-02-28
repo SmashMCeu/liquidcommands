@@ -1,7 +1,8 @@
 package de.liquiddev.command.autocomplete;
 
 import java.util.Collection;
-import java.util.function.BiFunction;
+
+import de.liquiddev.command.AbstractCommandSender;
 
 /**
  * 
@@ -18,7 +19,7 @@ public interface Autocompleter<T> {
 	 * @param str    input string to be autocompleted
 	 * @return possible autocompletions
 	 */
-	public Collection<String> autocomplete(T sender, String str);
+	public Collection<String> autocomplete(AbstractCommandSender<? super T> sender, String str);
 
 	/**
 	 * Combine the AutoCompleter with another one. This will not mutate the current
@@ -28,7 +29,7 @@ public interface Autocompleter<T> {
 	 * @param other The AutoCompleter to be combined with.
 	 * @return New AutoCompleter that acts like both this and the other combined.
 	 */
-	public default Autocompleter<T> and(Autocompleter<? super T> other) {
+	public default Autocompleter<T> and(Autocompleter<? extends T> other) {
 		CombiningAutocompleter<T> combined = new CombiningAutocompleter<>();
 		combined.addAutocompleter(this);
 		combined.addAutocompleter(other);
@@ -40,13 +41,11 @@ public interface Autocompleter<T> {
 	 * will not mutate the current {@link Autocompleter} but create a new
 	 * {@link PermissibleAutocompleter}.
 	 * 
-	 * @param permission        Permission to be checked
-	 * @param permissionChecker {@link BiFunction} used to check a senders
-	 *                          permission
+	 * @param permission Permission to be checked
 	 * @return New AutoCompleter with given permission
 	 */
-	public default Autocompleter<T> withPermission(String permission, BiFunction<? super T, String, Boolean> permissionChecker) {
-		PermissibleAutocompleter<T> permissible = new PermissibleAutocompleter<>(this, permissionChecker);
+	public default Autocompleter<T> withPermission(String permission) {
+		PermissibleAutocompleter<T> permissible = new PermissibleAutocompleter<>(this);
 		permissible.addPermission(permission);
 		return permissible;
 	}

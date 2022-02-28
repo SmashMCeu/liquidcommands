@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
+import de.liquiddev.command.AbstractCommandSender;
+
 class TextAutocompleter<T> implements Autocompleter<T> {
 
 	private String[] suggestions;
@@ -26,7 +28,7 @@ class TextAutocompleter<T> implements Autocompleter<T> {
 	}
 
 	@Override
-	public Collection<String> autocomplete(Object sender, String startsWith) {
+	public Collection<String> autocomplete(@SuppressWarnings("rawtypes") AbstractCommandSender sender, String startsWith) {
 		String lowercase = startsWith.toLowerCase();
 		return Arrays.stream(suggestions)
 				.filter(str -> str.toLowerCase()

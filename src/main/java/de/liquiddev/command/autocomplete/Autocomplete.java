@@ -38,9 +38,9 @@ public class Autocomplete {
 		return new StatelessAutocompleter<>(supplier, mapFunction);
 	}
 
-	public static <T> Autocompleter<T> combine(Autocompleter<? super T>... completors) {
+	public static <T> Autocompleter<T> combine(Autocompleter<? extends T>... completors) {
 		CombiningAutocompleter<T> combined = new CombiningAutocompleter<>();
-		for (Autocompleter<? super T> all : completors) {
+		for (Autocompleter<? extends T> all : completors) {
 			combined.addAutocompleter(all);
 		}
 		return combined;
