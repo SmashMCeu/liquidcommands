@@ -28,11 +28,9 @@ public class PermissibleAutocompleter<T> implements Autocompleter<T> {
 	 * Attaches a permission to the autocompleter.
 	 * 
 	 * @param permission permission to use this autocompleter
-	 * @return this
 	 */
-	public PermissibleAutocompleter<T> withPermission(String permission) {
+	public void addPermission(String permission) {
 		this.permissions.add(permission);
-		return this;
 	}
 
 	@Override

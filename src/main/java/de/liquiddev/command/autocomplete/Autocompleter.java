@@ -46,6 +46,8 @@ public interface Autocompleter<T> {
 	 * @return New AutoCompleter with given permission
 	 */
 	public default Autocompleter<T> withPermission(String permission, BiFunction<? super T, String, Boolean> permissionChecker) {
-		return new PermissibleAutocompleter<T>(this, permissionChecker).withPermission(permission);
+		PermissibleAutocompleter<T> permissible = new PermissibleAutocompleter<>(this, permissionChecker);
+		permissible.addPermission(permission);
+		return permissible;
 	}
 }

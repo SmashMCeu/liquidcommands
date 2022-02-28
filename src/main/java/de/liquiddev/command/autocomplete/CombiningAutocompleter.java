@@ -25,6 +25,12 @@ public class CombiningAutocompleter<T> implements Autocompleter<T> {
 	}
 
 	@Override
+	public Autocompleter<T> and(Autocompleter<? super T> other) {
+		this.addAutocompleter(other);
+		return this;
+	}
+
+	@Override
 	public Collection<String> autocomplete(T sender, String str) {
 		List<String> completions = new ArrayList<>();
 		autocompleters.forEach(all -> completions.addAll(all.autocomplete(sender, str)));
