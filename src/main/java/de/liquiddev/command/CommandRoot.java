@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import de.liquiddev.Commands;
 import de.liquiddev.command.autocomplete.Autocompleter;
 import de.liquiddev.command.context.CommandContext;
 import de.liquiddev.command.example.ReportErrorsCommand;

@@ -6,8 +6,8 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import de.liquiddev.Commands;
 import de.liquiddev.command.CommandFailException;
+import de.liquiddev.command.Commands;
 import de.liquiddev.command.adapter.bukkit.Arguments;
 import de.liquiddev.command.adapter.bukkit.PlayerCommand;
 import de.liquiddev.command.autocomplete.Autocompleter;
