@@ -12,8 +12,8 @@
 ```
 <dependency>
 	<groupId>de.liquiddev</groupId>
-	<artifactId>command</artifactId>
-	<version>1.2.0</version>
+	<artifactId>commands</artifactId>
+	<version>1.3.0</version>
 </dependency>
 ```
 
