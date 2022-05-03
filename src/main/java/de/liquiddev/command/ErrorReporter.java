@@ -28,7 +28,7 @@ public abstract class ErrorReporter {
 	private static class NullReporter extends ErrorReporter {
 		@Override
 		public String getReportText() {
-			return null;
+			return "See console for more information.";
 		}
 
 		@Override
