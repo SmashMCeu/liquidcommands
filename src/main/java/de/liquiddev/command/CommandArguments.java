@@ -2,27 +2,29 @@ package de.liquiddev.command;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.UUID;
 
-import com.google.common.base.Preconditions;
-
+import de.liquiddev.command.identity.McIdentity;
+import de.liquiddev.command.identity.McIdentityToken;
 import de.liquiddev.util.common.EnumUtil;
 import de.liquiddev.util.common.time.DurationParser;
+import lombok.NonNull;
 
 public class CommandArguments {
 
-	public static CommandArguments fromStrings(CommandNode<?> command, String[] args) {
-		return new CommandArguments(command, args);
+	public static CommandArguments fromStrings(CommandNode<?> command, AbstractCommandSender<?> sender, String[] args) {
+		return new CommandArguments(command, sender, args);
 	}
 
 	private final String[] arguments;
 	private CommandNode<?> command;
+	private AbstractCommandSender<?> sender;
 	private int offset;
 
-	protected CommandArguments(CommandNode<?> command, String[] arguments) {
-		Preconditions.checkNotNull(command, "command must not be null");
-		Preconditions.checkNotNull(arguments, "arguments must not be null");
+	protected CommandArguments(@NonNull CommandNode<?> command, @NonNull AbstractCommandSender<?> sender, @NonNull String[] arguments) {
 		this.command = command;
 		this.arguments = arguments;
+		this.sender = sender;
 		this.offset = 0;
 	}
 
@@ -149,6 +151,31 @@ public class CommandArguments {
 			return DurationParser.parseDuration(arg);
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidCommandArgException(this.command, Duration.class, arg);
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public McIdentityToken getIdentity(int index) throws InvalidCommandArgException {
+		int actualIndex = translateIndex(index, McIdentity.class);
+		String arg = arguments[actualIndex];
+		McIdentityToken token;
+		try {
+			token = McIdentityToken.ofUuid(UUID.fromString(arg));
+		} catch (IllegalArgumentException ex) {
+			token = McIdentityToken.ofName(arg);
+		}
+		token.whenUnknown(unknown -> getFailHandler().onInvalidArgument((AbstractCommandSender) sender, (CommandNode) command, McIdentity.class, arg));
+		return token;
+	}
+
+	private CommandFailHandler<?> getFailHandler() {
+		if (command instanceof CommandRoot<?>) {
+			return ((CommandRoot<?>) command).getFailHandler();
+		} else if (command instanceof CommandChild<?>) {
+			return ((CommandChild<?>) command).getRoot()
+					.getFailHandler();
+		} else {
+			throw new IllegalStateException();
 		}
 	}
 

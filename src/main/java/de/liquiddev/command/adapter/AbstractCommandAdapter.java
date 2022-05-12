@@ -22,7 +22,7 @@ public abstract class AbstractCommandAdapter<T> {
 	public void onCommand(T sender, String[] args) {
 		AbstractCommandSender<T> abstractSender = abstractSender(sender);
 		try {
-			command.executeCommand(abstractSender, getArguments(args));
+			command.executeCommand(abstractSender, getArguments(args, abstractSender));
 		} catch (Exception ex) {
 			ErrorReporter reporter = command.getErrorReporter();
 			reporter.reportError(this.getClass(), ex, "error executing command: /" + command.getName() + " " + String.join(" ", args));
@@ -48,5 +48,5 @@ public abstract class AbstractCommandAdapter<T> {
 
 	public abstract AbstractCommandSender<T> abstractSender(T sender);
 
-	public abstract CommandArguments getArguments(String[] args);
+	public abstract CommandArguments getArguments(String[] args, AbstractCommandSender<T> sender);
 }

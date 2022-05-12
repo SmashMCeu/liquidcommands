@@ -31,8 +31,8 @@ class ProxyCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 	}
 
 	@Override
-	public CommandArguments getArguments(String[] args) {
-		return ProxyArguments.fromStrings(getCommand(), args);
+	public CommandArguments getArguments(String[] args, AbstractCommandSender<CommandSender> sender) {
+		return ProxyArguments.fromStrings(getCommand(), sender, args);
 	}
 
 	private class CommandListener extends Command implements TabExecutor {

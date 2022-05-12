@@ -31,15 +31,18 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
 		try {
 			Server server = Bukkit.getServer();
-			Method commandMapGetter = server.getClass().getMethod("getCommandMap");
+			Method commandMapGetter = server.getClass()
+					.getMethod("getCommandMap");
 			CommandMap commandMap = (CommandMap) commandMapGetter.invoke(server);
 
 			if (Bukkit.getPluginCommand(name) != null) {
-				Bukkit.getPluginCommand(name).unregister(commandMap);
+				Bukkit.getPluginCommand(name)
+						.unregister(commandMap);
 				throw new IllegalStateException("command '" + name + "' already registered through plugin.yml");
 			}
 
-			commandMap.register(plugin.getDescription().getName(), listener);
+			commandMap.register(plugin.getDescription()
+					.getName(), listener);
 		} catch (Exception ex) {
 			throw new RuntimeException("could not register bukkit command", ex);
 		}
@@ -51,8 +54,8 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 	}
 
 	@Override
-	public CommandArguments getArguments(String[] args) {
-		return Arguments.fromStrings(this.getCommand(), args);
+	public CommandArguments getArguments(String[] args, AbstractCommandSender<CommandSender> sender) {
+		return Arguments.fromStrings(this.getCommand(), sender, args);
 	}
 
 	public class CommandListener extends Command {
