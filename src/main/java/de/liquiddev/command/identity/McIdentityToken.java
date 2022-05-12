@@ -6,8 +6,11 @@ import java.util.function.Consumer;
 
 import org.apache.logging.log4j.util.TriConsumer;
 
+import de.liquiddev.command.Commands;
+import de.liquiddev.command.identity.resolver.McIdentityResolver;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class McIdentityToken {
@@ -25,6 +28,9 @@ public class McIdentityToken {
 
 	private final String name;
 	private final UUID uuid;
+
+	private McIdentityResolver resolver = Commands.getIdentityResolver();
+	private volatile boolean resolving;
 
 	protected void fail() {
 		failConsumer.accept(this);
@@ -51,6 +57,7 @@ public class McIdentityToken {
 			throw new IllegalStateException("whenFound action already set.");
 		}
 		successConsumer = identityConsumer;
+		this.resolve();
 		return this;
 	}
 
@@ -64,6 +71,41 @@ public class McIdentityToken {
 
 	public McIdentityToken whenUnknown(Consumer<McIdentityToken> unknownTokenConsumer) {
 		failConsumer = unknownTokenConsumer;
+		return this;
+	}
+
+	public McIdentityToken withResolver(McIdentityResolver resolver) {
+		this.resolver = resolver;
+		return this;
+	}
+
+	@Synchronized
+	private McIdentityToken resolve() {
+		if (resolving) {
+			throw new IllegalStateException("Token already resolved.");
+		}
+		resolving = true;
+		if (isIdentifiedByName()) {
+			resolver.findByName(name)
+					.thenAccept(idOptional -> {
+						success(idOptional.get());
+					})
+					.exceptionally(ex -> {
+						fail();
+						return null;
+					});
+		} else if (isIdentifiedByUuid()) {
+			resolver.findByUuid(uuid)
+					.thenAccept(idOptional -> {
+						success(idOptional.get());
+					})
+					.exceptionally(ex -> {
+						fail();
+						return null;
+					});
+		} else {
+			throw new IllegalStateException();
+		}
 		return this;
 	}
 }
