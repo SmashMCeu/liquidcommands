@@ -94,7 +94,15 @@ public class CommandArguments {
 		int actualIndex = translateIndex(index, Integer.class);
 		String arg = arguments[actualIndex];
 		try {
-			return Integer.parseInt(arg);
+			int multiplier = 1;
+			if (arg.endsWith("k")) {
+				multiplier = 1_000;
+				arg = arg.substring(0, arg.length() - 1);
+			} else if (arg.endsWith("m")) {
+				multiplier = 1_000_000;
+				arg = arg.substring(0, arg.length() - 1);
+			}
+			return Integer.parseInt(arg) * multiplier;
 		} catch (NumberFormatException ex) {
 			throw new InvalidCommandArgException(command, Integer.class, arg);
 		}
@@ -102,9 +110,17 @@ public class CommandArguments {
 
 	public double getDouble(int index) throws InvalidCommandArgException {
 		int actualIndex = translateIndex(index, Double.class);
-		String arg = arguments[actualIndex];
+		String arg = arguments[actualIndex].replace(",", ".");
 		try {
-			return Double.parseDouble(arg);
+			int multiplier = 1;
+			if (arg.endsWith("k")) {
+				multiplier = 1_000;
+				arg = arg.substring(0, arg.length() - 1);
+			} else if (arg.endsWith("m")) {
+				multiplier = 1_000_000;
+				arg = arg.substring(0, arg.length() - 1);
+			}
+			return Double.parseDouble(arg) * multiplier;
 		} catch (NumberFormatException ex) {
 			throw new InvalidCommandArgException(command, Double.class, arg);
 		}
