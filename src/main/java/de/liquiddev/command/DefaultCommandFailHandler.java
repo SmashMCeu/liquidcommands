@@ -23,7 +23,7 @@ public class DefaultCommandFailHandler<T> implements CommandFailHandler<T> {
 
 	@Override
 	public void onInvalidArgument(AbstractCommandSender<T> sender, CommandNode<T> command, Class<?> required, String provided) {
-		if (required.equals(Integer.class) || required.equals(Long.class)) {
+		if (Number.class.isAssignableFrom(required)) {
 			sender.sendMessage(command.getPrefix() + "§cInvalid argument! §e" + provided + " §cis not a number!");
 		} else if (required.equals(Duration.class)) {
 			sender.sendMessage(command.getPrefix() + "§cInvalid time. Example: §e7d30h10m");
