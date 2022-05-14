@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 
+import de.liquiddev.command.identity.McIdentity;
+import de.liquiddev.command.identity.McIdentityToken;
 import de.liquiddev.util.common.EnumUtil;
 
 public class DefaultCommandFailHandler<T> implements CommandFailHandler<T> {
@@ -33,9 +35,11 @@ public class DefaultCommandFailHandler<T> implements CommandFailHandler<T> {
 					.map(e -> e.name())
 					.collect(Collectors.joining(", "));
 			sender.sendMessage(command.getPrefix() + "§cInvalid argument: §e" + provided + "§c, available: §e" + available);
+		} else if (required.equals(McIdentity.class) || required.equals(McIdentityToken.class)) {
+			sender.sendMessage(command.getPrefix() + "§cPlayer §e" + provided + " §cnot found!");
 		} else if (required.getSimpleName()
 				.contains("Player")) {
-			sender.sendMessage(command.getPrefix() + "§cPlayer §e" + provided + " §cnot found!");
+			sender.sendMessage(command.getPrefix() + "§cPlayer §e" + provided + " §cis not online!");
 		} else {
 			sender.sendMessage(command.getPrefix() + "§cInvalid argument! §e" + provided + " §cis not a " + required.getSimpleName() + "!");
 		}
