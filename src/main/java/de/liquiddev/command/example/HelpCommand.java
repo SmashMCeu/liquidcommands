@@ -150,7 +150,7 @@ public class HelpCommand extends CommandChild {
 					message.append("\n");
 				}
 			}
-			if (!first) {
+			if (first) {
 				first = false;
 			} else {
 				appendHelp(message, command);
