@@ -29,8 +29,8 @@ public interface Autocompleter<T> {
 	 * @param other The AutoCompleter to be combined with.
 	 * @return New AutoCompleter that acts like both this and the other combined.
 	 */
-	public default Autocompleter<T> and(Autocompleter<? super T> other) {
-		CombiningAutocompleter<T> combined = new CombiningAutocompleter<>();
+	public default <U extends T> Autocompleter<U> and(Autocompleter<U> other) {
+		CombiningAutocompleter<U> combined = new CombiningAutocompleter<>();
 		combined.addAutocompleter(this);
 		combined.addAutocompleter(other);
 		return combined;

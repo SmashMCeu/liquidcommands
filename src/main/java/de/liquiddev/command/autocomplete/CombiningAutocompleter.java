@@ -28,8 +28,8 @@ public class CombiningAutocompleter<T> implements Autocompleter<T> {
 
 	// not mutating
 	@Override
-	public Autocompleter<T> and(Autocompleter<? super T> other) {
-		CombiningAutocompleter<T> newCompleter = new CombiningAutocompleter<>();
+	public <U extends T> Autocompleter<U> and(Autocompleter<U> other) {
+		CombiningAutocompleter<U> newCompleter = new CombiningAutocompleter<>();
 		newCompleter.getAutocompleters()
 				.addAll(autocompleters);
 		newCompleter.getAutocompleters()
