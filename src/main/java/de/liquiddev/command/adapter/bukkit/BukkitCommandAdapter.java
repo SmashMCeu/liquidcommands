@@ -36,9 +36,7 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 			CommandMap commandMap = (CommandMap) commandMapGetter.invoke(server);
 
 			if (Bukkit.getPluginCommand(name) != null) {
-				Bukkit.getPluginCommand(name)
-						.unregister(commandMap);
-				throw new IllegalStateException("command '" + name + "' already registered through plugin.yml");
+				throw new IllegalStateException("command '" + name + "' already registered through plugin.yml or another plugin");
 			}
 
 			commandMap.register(plugin.getDescription()
