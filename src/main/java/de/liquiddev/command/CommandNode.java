@@ -1,5 +1,6 @@
 package de.liquiddev.command;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +30,7 @@ public abstract class CommandNode<T> {
 	private Class<T> senderType;
 	private String name;
 	private String hint;
-	private String[] aliases;
+	private List<String> aliases;
 	private CommandVisibility visibility;
 	private RateLimiter ratelimit;
 
@@ -45,7 +46,7 @@ public abstract class CommandNode<T> {
 		this.name = name;
 		this.hint = hint == null ? "" : hint;
 		this.senderType = senderType;
-		this.aliases = new String[] {};
+		this.aliases = new ArrayList<>(0);
 		this.visibility = CommandVisibility.SHOW_ALL;
 		this.ratelimit = RateLimit.none();
 	}
@@ -201,29 +202,24 @@ public abstract class CommandNode<T> {
 		return name;
 	}
 
-	public String[] getAliases() {
+	public List<String> getAliases() {
 		return aliases;
 	}
 
 	public void setAliases(String... aliases) {
 		Preconditions.checkNotNull(aliases, "aliases must not be null");
-		this.aliases = aliases;
+		this.aliases.clear();
+		this.aliases.addAll(List.of(aliases));
 	}
 
 	public void addAlias(String alias) {
 		Preconditions.checkNotNull(aliases, "alias must not be null");
-		String[] arr = Arrays.copyOf(aliases, aliases.length + 1);
-		arr[arr.length - 1] = alias;
-		this.aliases = arr;
+		this.aliases.add(alias);
 	}
 
 	public void addAliases(String... aliasArr) {
 		Preconditions.checkNotNull(aliases, "aliases must not be null");
-		String[] arr = Arrays.copyOf(this.aliases, this.aliases.length + aliasArr.length);
-		for (int i = 0; i < aliasArr.length; i++) {
-			arr[arr.length - aliasArr.length + i] = aliasArr[i];
-		}
-		this.aliases = arr;
+		this.aliases.addAll(List.of(aliasArr));
 	}
 
 	public String getHint() {

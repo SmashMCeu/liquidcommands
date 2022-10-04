@@ -1,7 +1,7 @@
 package de.liquiddev.command.adapter.bukkit;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -22,7 +22,7 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
 	public BukkitCommandAdapter(BukkitCommand<?> command) {
 		super(command);
-		this.listener = new CommandListener(command.getName(), command.getDescription(), command.getUsage(), Arrays.asList(command.getAliases()));
+		this.listener = new CommandListener(command.getName(), command.getDescription(), command.getUsage(), command.getAliases());
 	}
 
 	public void register(Plugin plugin) {
@@ -37,14 +37,8 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
 			var exists = Bukkit.getPluginCommand(name);
 			if (exists != null) {
-				if (plugin.equals(exists.getPlugin())) {
-					throw new IllegalStateException("command '" + name + "' already registered through plugin.yml");
-				} else {
-					var otherPlugin = exists.getPlugin();
-					throw new IllegalStateException("command '" + name + "' already registered by " + otherPlugin.getName());
-				}
+				exists.unregister(commandMap);
 			}
-
 			commandMap.register(plugin.getDescription()
 					.getName(), listener);
 		} catch (Exception ex) {
@@ -102,7 +96,7 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
 		@Override
 		public List<String> getAliases() {
-			return Arrays.asList(getCommand().getAliases());
+			return new ArrayList<String>(getCommand().getAliases());
 		}
 	}
 }

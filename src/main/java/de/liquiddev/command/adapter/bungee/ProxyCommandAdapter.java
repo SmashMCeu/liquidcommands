@@ -64,7 +64,8 @@ class ProxyCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 		@Override
 		public String[] getAliases() {
 			return ProxyCommandAdapter.this.getCommand()
-					.getAliases();
+					.getAliases()
+					.toArray(String[]::new);
 		}
 	}
 }
