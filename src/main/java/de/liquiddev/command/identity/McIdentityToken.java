@@ -4,8 +4,6 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import org.apache.logging.log4j.util.TriConsumer;
-
 import de.liquiddev.command.Commands;
 import de.liquiddev.command.identity.resolver.McIdentityResolver;
 import lombok.AccessLevel;
@@ -63,10 +61,6 @@ public class McIdentityToken {
 
 	public <T> McIdentityToken whenFound(BiConsumer<McIdentity, T> function, T param) {
 		return whenFound(identity -> function.accept(identity, param));
-	}
-
-	public <T, U> McIdentityToken whenFound(TriConsumer<McIdentity, T, U> function, T param1, U param2) {
-		return whenFound(identity -> function.accept(identity, param1, param2));
 	}
 
 	public McIdentityToken whenUnknown(Consumer<McIdentityToken> unknownTokenConsumer) {
