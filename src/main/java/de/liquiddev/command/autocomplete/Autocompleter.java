@@ -1,6 +1,7 @@
 package de.liquiddev.command.autocomplete;
 
 import java.util.Collection;
+import java.util.function.BiPredicate;
 
 import de.liquiddev.command.AbstractCommandSender;
 
@@ -48,5 +49,16 @@ public interface Autocompleter<T> {
 		PermissibleAutocompleter<T> permissible = new PermissibleAutocompleter<>(this);
 		permissible.addPermission(permission);
 		return permissible;
+	}
+
+	/**
+	 * Adds a filter to the autocompleter that can filter specific arguments on a
+	 * per-player-basis.
+	 * 
+	 * @param filter for the Autocompleted statements
+	 * @return new {@link Autocompleter} with the filter applied
+	 */
+	public default Autocompleter<T> filter(BiPredicate<T, String> filter) {
+		return new FillteringAutocompleter<T>(filter);
 	}
 }
