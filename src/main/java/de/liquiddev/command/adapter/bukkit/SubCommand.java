@@ -1,13 +1,16 @@
 package de.liquiddev.command.adapter.bukkit;
 
-import org.bukkit.command.CommandSender;
-
 import de.liquiddev.command.AbstractCommandSender;
 import de.liquiddev.command.CommandArguments;
 import de.liquiddev.command.CommandChild;
 import de.liquiddev.command.CommandFailException;
+import org.bukkit.command.CommandSender;
 
 abstract class SubCommand<T extends CommandSender> extends CommandChild<T> {
+
+	public SubCommand(Class<T> senderType, String name) {
+		this(senderType, name, "");
+	}
 
 	public SubCommand(Class<T> senderType, String name, String hint) {
 		super(senderType, name, hint);

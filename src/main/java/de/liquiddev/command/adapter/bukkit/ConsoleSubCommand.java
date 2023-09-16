@@ -6,4 +6,8 @@ public abstract class ConsoleSubCommand extends SubCommand<CommandSender> {
 	public ConsoleSubCommand(String name, String hint) {
 		super(CommandSender.class, name, hint);
 	}
+
+	public ConsoleSubCommand(String name) {
+		super(CommandSender.class, name);
+	}
 }

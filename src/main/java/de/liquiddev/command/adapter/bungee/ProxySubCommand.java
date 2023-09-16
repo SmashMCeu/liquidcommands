@@ -8,6 +8,10 @@ import net.md_5.bungee.api.CommandSender;
 
 public abstract class ProxySubCommand<T extends CommandSender> extends CommandChild<T> {
 
+	public ProxySubCommand(Class<T> senderType, String name) {
+		this(senderType, name, "");
+	}
+
 	public ProxySubCommand(Class<T> senderType, String name, String hint) {
 		super(senderType, name, hint);
 	}

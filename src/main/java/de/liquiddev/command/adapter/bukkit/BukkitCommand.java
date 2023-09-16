@@ -12,6 +12,10 @@ abstract class BukkitCommand<T extends CommandSender> extends CommandRoot<T> {
 
 	private BukkitCommandAdapter adapter;
 
+	public BukkitCommand(Class<T> type, String name) {
+		this(type, name, "");
+	}
+
 	public BukkitCommand(Class<T> type, String name, String hint) {
 		super(type, name, hint);
 		this.adapter = new BukkitCommandAdapter(this);
