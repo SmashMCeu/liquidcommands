@@ -16,12 +16,6 @@ public abstract class ProxyCommand<T extends CommandSender> extends CommandRoot<
 		this.adapter = new ProxyCommandAdapter(this, name, aliases);
 	}
 
-	@Deprecated
-	public ProxyCommand(String prefix, Class<T> senderType, String name, String hint, String... aliases) {
-		super(senderType, name, hint, prefix);
-		this.adapter = new ProxyCommandAdapter(this, name, aliases);
-	}
-
 	public void register(Plugin plugin) {
 		adapter.register(plugin);
 	}
