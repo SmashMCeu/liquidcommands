@@ -26,7 +26,11 @@ public abstract class VelocityCommand <T extends CommandSource> extends CommandR
     }
 
     @Override
-    protected abstract void onCommand(AbstractCommandSender<T> sender, CommandArguments args) throws CommandFailException;
+    protected void onCommand(AbstractCommandSender<T> sender, CommandArguments arguments) throws CommandFailException {
+        this.onCommand(sender.getSender(), (VelocityArguments) arguments);
+    }
+
+    protected abstract void onCommand(T t, VelocityArguments args) throws CommandFailException;
 
     public void register() {
         this.adapter.register();
