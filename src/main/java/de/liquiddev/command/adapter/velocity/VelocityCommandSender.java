@@ -3,7 +3,6 @@ package de.liquiddev.command.adapter.velocity;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import de.liquiddev.command.AbstractCommandSender;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class VelocityCommandSender<T extends CommandSource> extends AbstractCommandSender<T> {

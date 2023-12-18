@@ -1,7 +1,5 @@
 package de.liquiddev.command.adapter.velocity;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
@@ -11,9 +9,6 @@ import de.liquiddev.command.AbstractCommandSender;
 import de.liquiddev.command.CommandArguments;
 import de.liquiddev.command.CommandRoot;
 import de.liquiddev.command.adapter.AbstractCommandAdapter;
-import de.liquiddev.command.adapter.bungee.ProxyArguments;
-
-import java.util.Arrays;
 
 public class VelocityCommandAdapter extends AbstractCommandAdapter<CommandSource> {
 
