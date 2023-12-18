@@ -1,19 +1,6 @@
 package de.liquiddev.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.base.Preconditions;
-
 import de.liquiddev.command.autocomplete.Autocomplete;
 import de.liquiddev.command.autocomplete.Autocompleter;
 import de.liquiddev.command.context.CommandContext;
@@ -21,6 +8,12 @@ import de.liquiddev.command.example.HelpCommand;
 import de.liquiddev.command.ratelimit.CommandRateLimitExceededException;
 import de.liquiddev.command.ratelimit.RateLimit;
 import de.liquiddev.command.ratelimit.RateLimiter;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.List.of;
 
 public abstract class CommandNode<T> {
 
@@ -79,10 +72,10 @@ public abstract class CommandNode<T> {
 	/**
 	 * Get the suggestions for the command with the given {@link String} array as
 	 * Arguments. The cursor is assumed to be the end of the last argument.
-	 * 
+	 * <p>
 	 * Should return <code>null</code> to fallback to the {@link CommandRoot}
 	 * default tab {@link Autocompleter}.
-	 * 
+	 *
 	 * @param sender
 	 * @param args
 	 * @return list of suggestions or null to fallback to default suggestions
@@ -148,7 +141,7 @@ public abstract class CommandNode<T> {
 	/**
 	 * Add a tab completer for a given index. Use {@link Autocomplete} for
 	 * predefined tab completer.
-	 * 
+	 *
 	 * @param index         argument index for the autocompleter
 	 * @param autocompleter use {@link Autocomplete}
 	 */
@@ -208,8 +201,7 @@ public abstract class CommandNode<T> {
 
 	public void setAliases(String... aliases) {
 		Preconditions.checkNotNull(aliases, "aliases must not be null");
-		this.aliases.clear();
-		this.aliases.addAll(List.of(aliases));
+		this.aliases = new ArrayList<>(of(aliases));
 	}
 
 	public void addAlias(String alias) {
@@ -219,7 +211,7 @@ public abstract class CommandNode<T> {
 
 	public void addAliases(String... aliasArr) {
 		Preconditions.checkNotNull(aliases, "aliases must not be null");
-		this.aliases.addAll(List.of(aliasArr));
+		this.aliases.addAll(of(aliasArr));
 	}
 
 	public String getHint() {
@@ -251,7 +243,7 @@ public abstract class CommandNode<T> {
 	/**
 	 * Set the command visibility. This affects the autocomplete feature as well as
 	 * the {@link HelpCommand} command list.
-	 * 
+	 *
 	 * @param visibility the command visibility
 	 */
 	public void setVisibility(CommandVisibility visibility) {
@@ -301,7 +293,7 @@ public abstract class CommandNode<T> {
 	/**
 	 * Adds a context to the commands root. This can be retrieved with getContext()
 	 * by all childs of the same root.
-	 * 
+	 *
 	 * @param <C>     generic type of the context class
 	 * @param type    class type of the context
 	 * @param context the context instance
@@ -314,7 +306,7 @@ public abstract class CommandNode<T> {
 
 	/**
 	 * Retrieve a context by it's class type.
-	 * 
+	 *
 	 * @param <C>  generic type of the context class
 	 * @param type class type of the context
 	 * @return the context instance
