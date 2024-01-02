@@ -1,11 +1,11 @@
 package de.liquiddev.command.autocomplete;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 import de.liquiddev.command.AbstractCommandSender;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 class ProxyPlayerAutocompleter<T extends CommandSender> implements Autocompleter<T> {
 
@@ -15,9 +15,8 @@ class ProxyPlayerAutocompleter<T extends CommandSender> implements Autocompleter
 		return ProxyServer.getInstance()
 				.getPlayers()
 				.stream()
-				.map(p -> p.getName())
-				.filter(n -> n.toLowerCase()
-						.startsWith(lowercase))
+				.map(CommandSender::getName)
+				.filter(n -> n.toLowerCase().startsWith(lowercase))
 				.collect(Collectors.toList());
 	}
 }
