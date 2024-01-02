@@ -11,7 +11,7 @@ public class Autocomplete {
 	@SuppressWarnings("rawtypes")
 	public static final Autocompleter NONE = (t, s) -> Collections.emptyList();
 
-	private Autocomplete() {
+	protected Autocomplete() {
 	}
 
 	public static <T> Autocompleter<T> text(String... text) {
