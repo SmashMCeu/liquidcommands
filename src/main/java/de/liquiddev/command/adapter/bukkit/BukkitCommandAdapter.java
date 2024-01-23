@@ -1,9 +1,9 @@
 package de.liquiddev.command.adapter.bukkit;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
+import de.liquiddev.command.AbstractCommandSender;
+import de.liquiddev.command.CommandArguments;
+import de.liquiddev.command.CommandRoot;
+import de.liquiddev.command.adapter.AbstractCommandAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -11,10 +11,9 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import de.liquiddev.command.AbstractCommandSender;
-import de.liquiddev.command.CommandArguments;
-import de.liquiddev.command.CommandRoot;
-import de.liquiddev.command.adapter.AbstractCommandAdapter;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
@@ -31,18 +30,16 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
 		try {
 			Server server = Bukkit.getServer();
-			Method commandMapGetter = server.getClass()
-					.getMethod("getCommandMap");
+			Method commandMapGetter = server.getClass().getMethod("getCommandMap");
 			CommandMap commandMap = (CommandMap) commandMapGetter.invoke(server);
 
 			var exists = Bukkit.getPluginCommand(name);
 			if (exists != null) {
 				exists.unregister(commandMap);
 			}
-			commandMap.register(plugin.getDescription()
-					.getName(), listener);
+			commandMap.register(plugin.getDescription().getName(), listener);
 		} catch (Exception ex) {
-			throw new RuntimeException("could not register bukkit command", ex);
+			throw new IllegalStateException("could not register bukkit command with name '" + name + "'", ex);
 		}
 	}
 
