@@ -10,6 +10,10 @@ public class MissingCommandArgException extends InvalidCommandArgException {
 		this.index = index;
 	}
 
+	public MissingCommandArgException(CommandNode<?> command) {
+		super(command, String.class, null);
+	}
+
 	public int getIndex() {
 		return index;
 	}
