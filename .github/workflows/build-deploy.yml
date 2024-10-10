@@ -35,7 +35,7 @@ jobs:
         MAVEN_PASSWORD: ${{ secrets.REPOSILITE_TOKEN }}
       
     - name: Publish artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: commands
         path: target/*.jar
