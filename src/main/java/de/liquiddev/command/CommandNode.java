@@ -49,7 +49,7 @@ public abstract class CommandNode<T> {
 		if (!this.hasPermission(sender)) {
 			throw new CommandPermissionException(this);
 		}
-		if (!this.ratelimit.acquire(sender.getSender())) {
+		if (this.ratelimit.isRateLimited(sender.getSender())) {
 			throw new CommandRateLimitExceededException(this);
 		}
 
@@ -63,10 +63,12 @@ public abstract class CommandNode<T> {
 					throw new CommandSenderException(subCommand, targetType);
 				}
 				subCommand.executeCommand(typelessSender, args.next(subCommand, i + 1));
+				this.ratelimit.acquire(sender.getSender());
 				return;
 			}
 		}
 		this.onCommand(sender, args);
+		this.ratelimit.acquire(sender.getSender());
 	}
 
 	/**
