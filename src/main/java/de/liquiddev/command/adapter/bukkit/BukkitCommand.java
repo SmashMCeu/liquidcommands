@@ -8,6 +8,8 @@ import de.liquiddev.command.autocomplete.Autocomplete;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import java.io.IOException;
+
 abstract class BukkitCommand<T extends CommandSender> extends CommandRoot<T> {
 
 	private BukkitCommandAdapter adapter;
@@ -31,5 +33,5 @@ abstract class BukkitCommand<T extends CommandSender> extends CommandRoot<T> {
 		this.onCommand(sender.getSender(), (Arguments) args);
 	}
 
-	protected abstract void onCommand(T sender, Arguments args) throws CommandFailException;
+	protected abstract void onCommand(T sender, Arguments args) throws CommandFailException, IOException;
 }
