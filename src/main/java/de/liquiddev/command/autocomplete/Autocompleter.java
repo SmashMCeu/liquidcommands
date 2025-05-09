@@ -59,6 +59,8 @@ public interface Autocompleter<T> {
 	 * @return new {@link Autocompleter} with the filter applied
 	 */
 	public default Autocompleter<T> filter(BiPredicate<T, String> filter) {
-		return new FillteringAutocompleter<T>(filter);
+		Autocompleter<T> filtering = new FillteringAutocompleter<T>(filter);
+		filtering.addAutocompleter(this);
+		return filtering;
 	}
 }
