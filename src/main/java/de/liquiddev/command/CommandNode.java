@@ -155,7 +155,7 @@ public abstract class CommandNode<T> {
 		}
 	}
 
-	private Autocompleter<? super T> getAutocompleter(int index) {
+	public Autocompleter<? super T> getAutocompleter(int index) {
 		return autocompleters.get(index);
 	}
 
