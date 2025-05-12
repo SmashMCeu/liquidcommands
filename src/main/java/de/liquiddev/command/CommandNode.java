@@ -8,6 +8,8 @@ import de.liquiddev.command.example.HelpCommand;
 import de.liquiddev.command.ratelimit.CommandRateLimitExceededException;
 import de.liquiddev.command.ratelimit.RateLimit;
 import de.liquiddev.command.ratelimit.RateLimiter;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -20,15 +22,22 @@ public abstract class CommandNode<T> {
 	private Map<Integer, Collection<CommandChild<? extends T>>> subCommandMap = new HashMap<>();
 	private Map<Integer, Autocompleter<? super T>> autocompleters = new HashMap<>(0);
 
+	@Getter
 	private Class<T> senderType;
 	private String name;
+	@Getter
 	private String hint;
 	private List<String> aliases;
+	@Getter
 	private CommandVisibility visibility;
+	@Getter
+	@Setter
 	private RateLimiter ratelimit;
 
+	@Setter
 	@Nullable
 	private String permission;
+	@Setter
 	@Nullable
 	private String description;
 
@@ -179,17 +188,34 @@ public abstract class CommandNode<T> {
 		if (sub == null) {
 			return null;
 		}
+		/* prefer exact matches */
 		for (CommandChild<? extends T> command : sub) {
-			if (command.getName()
-					.equalsIgnoreCase(name)) {
+			if (command.getName().equalsIgnoreCase(name)) {
 				return command;
 			}
+		}
+
+		/* try aliases */
+		for (CommandChild<? extends T> command : sub) {
 			for (String alias : command.getAliases()) {
 				if (alias.equalsIgnoreCase(name)) {
 					return command;
 				}
 			}
 		}
+
+		/* try shortcuts */
+		List<CommandChild<? extends T>> possible = new ArrayList<>();
+		for (CommandChild<? extends T> command : sub) {
+			if (command.getName().toLowerCase().startsWith(name)) {
+				possible.add(command);
+			}
+		}
+		// only pick when it's not ambiguous
+		if (possible.size() == 1) {
+			return possible.getFirst();
+		}
+
 		return null;
 	}
 
@@ -216,17 +242,9 @@ public abstract class CommandNode<T> {
 		this.aliases.addAll(of(aliasArr));
 	}
 
-	public String getHint() {
-		return hint;
-	}
-
 	@Nullable
 	public String getDescription() {
 		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	@Nullable
@@ -236,10 +254,6 @@ public abstract class CommandNode<T> {
 
 	public boolean hasPermission(AbstractCommandSender<?> sender) {
 		return this.permission == null || sender.hasPermission(permission);
-	}
-
-	public void setPermission(String permission) {
-		this.permission = permission;
 	}
 
 	/**
@@ -253,28 +267,12 @@ public abstract class CommandNode<T> {
 		this.visibility = visibility;
 	}
 
-	public CommandVisibility getVisibility() {
-		return visibility;
-	}
-
-	public void setRatelimit(RateLimiter ratelimit) {
-		this.ratelimit = ratelimit;
-	}
-
-	public RateLimiter getRatelimit() {
-		return ratelimit;
-	}
-
 	public boolean isAutocompleteVisible() {
 		return this.visibility.isShowAutocomplete();
 	}
 
 	public boolean isHelpVisible() {
 		return this.visibility.isShowInHelp();
-	}
-
-	public Class<T> getSenderType() {
-		return senderType;
 	}
 
 	public Collection<CommandChild<? extends T>> getSubCommands(int index) {
