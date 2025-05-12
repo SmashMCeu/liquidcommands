@@ -47,10 +47,6 @@ public class CommandArguments {
 	 */
 	public boolean isPresent(int index) {
 		int actualIndex = index + offset;
-		if (actualIndex < offset) {
-			// For a more simple usage we will ignore the current index as an argument
-			actualIndex--;
-		}
 		return actualIndex >= 0 && actualIndex < arguments.length;
 	}
 

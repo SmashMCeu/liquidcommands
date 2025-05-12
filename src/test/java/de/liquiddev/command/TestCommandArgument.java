@@ -1,12 +1,9 @@
 package de.liquiddev.command;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 public class TestCommandArgument {
 
@@ -93,7 +90,7 @@ public class TestCommandArgument {
 		CommandArguments args = argumentsOf(command, "prevarg", "command", "arg0");
 		args.next(command, 2);
 		assertTrue(args.isPresent(-1));
-		assertEquals("prevarg", args.get(-1));
+		assertEquals("prevarg", args.get(-2));
 	}
 
 	@Test
@@ -101,7 +98,7 @@ public class TestCommandArgument {
 		CommandNode<?> command = mock(CommandNode.class);
 		CommandArguments args = argumentsOf(command, "prevarg", "command", "arg0");
 		args.next(command, 1);
-		assertThrows(IndexOutOfBoundsException.class, () -> args.get(-2));
+		assertThrows(IndexOutOfBoundsException.class, () -> args.get(-3));
 	}
 
 	@Test
@@ -109,7 +106,7 @@ public class TestCommandArgument {
 		CommandNode<?> command = mock(CommandNode.class);
 		CommandArguments args = argumentsOf(command, "prevarg", "commandname", "arg0");
 		args.next(command, 2);
-		assertTrue(args.checkOptional(-1, "prevarg"));
+		assertTrue(args.checkOptional(-2, "prevarg"));
 	}
 
 	@Test
@@ -117,7 +114,7 @@ public class TestCommandArgument {
 		CommandNode<?> command = mock(CommandNode.class);
 		CommandArguments args = argumentsOf(command, "prevarg", "commandname", "arg0");
 		args.next(command, 2);
-		assertFalse(args.check(-1, "commandname"));
+		assertFalse(args.check(-2, "commandname"));
 	}
 
 	@Test
@@ -125,6 +122,6 @@ public class TestCommandArgument {
 		CommandNode<?> command = mock(CommandNode.class);
 		CommandArguments args = argumentsOf(command, "prevarg", "commandname", "arg0");
 		args.next(command, 2);
-		assertFalse(args.checkOptional(-2, "prevargs"));
+		assertFalse(args.checkOptional(-3, "prevargs"));
 	}
 }
