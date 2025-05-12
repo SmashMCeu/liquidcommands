@@ -13,7 +13,6 @@ import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.List.of;
 
@@ -24,9 +23,11 @@ public abstract class CommandNode<T> {
 
 	@Getter
 	private Class<T> senderType;
+	@Getter
 	private String name;
 	@Getter
 	private String hint;
+	@Getter
 	private List<String> aliases;
 	@Getter
 	private CommandVisibility visibility;
@@ -113,7 +114,7 @@ public abstract class CommandNode<T> {
 			CommandChild<? extends T> subCommand = getSubCommand(i, qualifier);
 			if (subCommand != null) {
 				String[] argsCopy = Arrays.copyOfRange(args, i + 1, args.length);
-				AbstractCommandSender typelessSender = (AbstractCommandSender) sender;
+				AbstractCommandSender typelessSender = sender;
 				Class<? extends T> targetType = subCommand.getSenderType();
 				if (!targetType.isInstance(sender.getSender())) {
 					return Collections.emptyList();
@@ -219,14 +220,6 @@ public abstract class CommandNode<T> {
 		return null;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public List<String> getAliases() {
-		return aliases;
-	}
-
 	public void setAliases(String... aliases) {
 		Preconditions.checkNotNull(aliases, "aliases must not be null");
 		this.aliases = new ArrayList<>(of(aliases));
@@ -277,9 +270,7 @@ public abstract class CommandNode<T> {
 
 	public Collection<CommandChild<? extends T>> getSubCommands(int index) {
 		if (subCommandMap.containsKey(index)) {
-			return subCommandMap.get(index)
-					.stream()
-					.collect(Collectors.toList());
+			return new ArrayList<>(subCommandMap.get(index));
 		} else {
 			return Collections.emptyList();
 		}

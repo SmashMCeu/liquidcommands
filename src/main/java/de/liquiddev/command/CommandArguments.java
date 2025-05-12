@@ -1,14 +1,14 @@
 package de.liquiddev.command;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.UUID;
-
 import de.liquiddev.command.identity.McIdentity;
 import de.liquiddev.command.identity.McIdentityToken;
 import de.liquiddev.util.common.EnumUtil;
 import de.liquiddev.util.common.time.DurationParser;
 import lombok.NonNull;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.UUID;
 
 public class CommandArguments {
 
@@ -30,7 +30,7 @@ public class CommandArguments {
 
 	/**
 	 * Skips to next index.
-	 * 
+	 *
 	 * @param next How far should be skipped?
 	 */
 	protected CommandArguments next(CommandNode<?> nextNode, int next) {
@@ -41,7 +41,7 @@ public class CommandArguments {
 
 	/**
 	 * Checks if the given index is present.
-	 * 
+	 *
 	 * @param index command argument index to be checked
 	 * @return <code>true</code> if the index is present and not out of bounds
 	 */
@@ -56,18 +56,12 @@ public class CommandArguments {
 
 	protected int translateIndex(int index, Class<?> indexType) throws MissingCommandArgException {
 		int actualIndex = index + offset;
-		if (index < 0) {
-			// For a more simple usage we will ignore the current index as an argument
-			actualIndex--;
-		}
 		if (arguments.length <= actualIndex) {
 			throw new MissingCommandArgException(command, indexType, index);
 		}
 		if (actualIndex < 0) {
-			// A little bit more complex because we want to ignore the current index as a
-			// previous argument, thus needing us to add/substract 1 from min an max.
-			int min = -offset + 1;
-			int max = arguments.length - offset - 1;
+			int min = -offset;
+			int max = arguments.length - offset;
 			throw new IndexOutOfBoundsException("Index " + index + " out of bounds [" + min + ", " + max + "]");
 		}
 		return actualIndex;
@@ -130,14 +124,14 @@ public class CommandArguments {
 		int actualIndex = translateIndex(index, Integer.class);
 		String arg = arguments[actualIndex];
 
-		final String[] trueValues = { "true", "yes", "on", "enable", "enabled", "1" };
+		final String[] trueValues = {"true", "yes", "on", "enable", "enabled", "1"};
 		for (String trueStr : trueValues) {
 			if (trueStr.equalsIgnoreCase(arg)) {
 				return true;
 			}
 		}
 
-		final String[] falseValues = { "false", "no", "off", "disable", "disabled", "0" };
+		final String[] falseValues = {"false", "no", "off", "disable", "disabled", "0"};
 		for (String falseStr : falseValues) {
 			if (falseStr.equalsIgnoreCase(arg)) {
 				return false;
@@ -216,10 +210,10 @@ public class CommandArguments {
 	 * Checks if the given {@link String} is equal to the argument at the given
 	 * index. Returns <code>false</code> if either the index is out of bounds or the
 	 * given {@link String} does not match to the commands arguments.
-	 * 
+	 * <p>
 	 * Note: This is not case sensitive. If you want case sensitivity to matter, use
 	 * checkWithCaseOptional() instead.
-	 * 
+	 *
 	 * @param index the index to look at
 	 * @param str   the {@link String} to be checked
 	 * @return <code>true</code> if the {@link String} is present and equal.
@@ -241,8 +235,7 @@ public class CommandArguments {
 	 * Checks if the given case sensitive {@link String} is equal to the argument at
 	 * the given index. Returns <code>false</code> if either the index is out of
 	 * bounds or the given {@link String} does not match to the commands arguments.
-	 * 
-	 * 
+	 *
 	 * @param index the index to look at
 	 * @param str   the case sensitive {@link String} to be checked
 	 * @return <code>true</code> if the {@link String} is present and equal.
@@ -265,10 +258,10 @@ public class CommandArguments {
 	 * index. Returns <code>false</code> if the given {@link String} does not match
 	 * the commands arguments. If the index is out of bounds, a
 	 * {@link MissingCommandArgException} is thrown.
-	 * 
+	 * <p>
 	 * Note: This is not case sensitive. If you want case sensitivity to matter, use
 	 * checkWithCase() instead.
-	 * 
+	 *
 	 * @param index the index to look at
 	 * @param str   the {@link String} to be checked
 	 * @return <code>true</code> if the {@link String} is present and equal.
@@ -283,7 +276,7 @@ public class CommandArguments {
 	 * the given index. Returns <code>false</code> if the given {@link String} does
 	 * not match the commands arguments. If the index is out of bounds, a
 	 * {@link MissingCommandArgException} is thrown.
-	 * 
+	 *
 	 * @param index the index to look at
 	 * @param str   the case sensitive {@link String} to be checked
 	 * @return <code>true</code> if the {@link String} is present and equal.
