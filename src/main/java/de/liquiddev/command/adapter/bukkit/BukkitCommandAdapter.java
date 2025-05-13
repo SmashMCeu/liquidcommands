@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
@@ -35,11 +36,32 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 
 			var exists = Bukkit.getPluginCommand(name);
 			if (exists != null) {
-				exists.unregister(commandMap);
+				if (!tryUnregister()) {
+					throw new IllegalStateException("command with name '" + name + "' is already registered");
+				}
 			}
 			commandMap.register(plugin.getDescription().getName(), listener);
 		} catch (Exception ex) {
 			throw new IllegalStateException("could not register bukkit command with name '" + name + "'", ex);
+		}
+	}
+
+	public boolean tryUnregister() {
+		try {
+			CommandRoot<?> root = this.getCommand();
+			String name = root.getName();
+			Server server = Bukkit.getServer();
+			Method commandMapGetter = server.getClass().getMethod("getCommandMap");
+			CommandMap commandMap = (CommandMap) commandMapGetter.invoke(server);
+
+			var exists = Bukkit.getPluginCommand(name);
+			if (exists != null) {
+				exists.unregister(commandMap);
+			}
+			return true;
+		} catch (Exception ex) {
+			Logger.getLogger(BukkitCommandAdapter.class.getName()).warning("Failed unregistering command: " + ex.getMessage());
+			return false;
 		}
 	}
 
