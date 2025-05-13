@@ -54,9 +54,16 @@ class BukkitCommandAdapter extends AbstractCommandAdapter<CommandSender> {
 			Method commandMapGetter = server.getClass().getMethod("getCommandMap");
 			CommandMap commandMap = (CommandMap) commandMapGetter.invoke(server);
 
-			var exists = Bukkit.getPluginCommand(name);
-			if (exists != null) {
-				exists.unregister(commandMap);
+			if (listener != null) {
+				// unregister command
+				listener.unregister(commandMap);
+
+				// unregister from command map
+				Method unregisterCommandMap = commandMap.getClass().getMethod("unregister", String.class);
+				boolean success = Boolean.parseBoolean(unregisterCommandMap.invoke(commandMap, name).toString());
+				if (!success) {
+					throw new IllegalStateException("unregister() returned false");
+				}
 			}
 			return true;
 		} catch (Exception ex) {

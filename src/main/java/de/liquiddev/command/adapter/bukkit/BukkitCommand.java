@@ -26,6 +26,10 @@ abstract class BukkitCommand<T extends CommandSender> extends CommandRoot<T> {
 		adapter.register(plugin);
 	}
 
+	public void tryUnregister() {
+		this.adapter.tryUnregister();
+	}
+
 	@Override
 	protected void onCommand(AbstractCommandSender<T> sender, CommandArguments args) throws CommandFailException {
 		this.onCommand(sender.getSender(), (Arguments) args);
