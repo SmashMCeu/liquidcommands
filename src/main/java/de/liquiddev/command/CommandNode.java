@@ -214,7 +214,7 @@ public abstract class CommandNode<T> {
 		}
 		// only pick when it's not ambiguous
 		if (possible.size() == 1) {
-			return possible.getFirst();
+			return possible.get(0);
 		}
 
 		return null;
