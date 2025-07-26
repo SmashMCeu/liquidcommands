@@ -1,25 +1,28 @@
 package de.liquiddev.command.autocomplete;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import de.liquiddev.command.AbstractCommandSender;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Combine multiple AutoCompleters into one.
- * 
- * @author LiquidDev
  *
  * @param <T> type of sender who requested the autocompletion
+ * @author LiquidDev
  */
 @Getter
 @RequiredArgsConstructor
 public class CombiningAutocompleter<T> implements Autocompleter<T> {
 
-	private Collection<Autocompleter<? super T>> autocompleters = new ArrayList<>(2);
+	/**
+	 * If true, the first Autocompleter that returns any result will be used for completion.
+	 */
+	private final boolean prioritized;
+	private final Collection<Autocompleter<? super T>> autocompleters = new ArrayList<>(2);
 
 	// mutates
 	public void addAutocompleter(Autocompleter<? super T> autocompleter) {
@@ -29,7 +32,7 @@ public class CombiningAutocompleter<T> implements Autocompleter<T> {
 	// not mutating
 	@Override
 	public <U extends T> Autocompleter<U> and(Autocompleter<U> other) {
-		CombiningAutocompleter<U> newCompleter = new CombiningAutocompleter<>();
+		CombiningAutocompleter<U> newCompleter = new CombiningAutocompleter<>(false);
 		newCompleter.getAutocompleters()
 				.addAll(autocompleters);
 		newCompleter.getAutocompleters()
@@ -40,7 +43,12 @@ public class CombiningAutocompleter<T> implements Autocompleter<T> {
 	@Override
 	public Collection<String> autocomplete(AbstractCommandSender<? extends T> sender, String str) {
 		List<String> completions = new ArrayList<>();
-		autocompleters.forEach(all -> completions.addAll(all.autocomplete(sender, str)));
+		for (Autocompleter<? super T> all : autocompleters) {
+			completions.addAll(all.autocomplete(sender, str));
+			if (prioritized && !completions.isEmpty()) {
+				break; // We found something - stop looking for more
+			}
+		}
 		return completions;
 	}
 }

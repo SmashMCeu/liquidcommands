@@ -39,7 +39,7 @@ public class Autocomplete {
 	}
 
 	public static <T> Autocompleter<T> combine(Autocompleter<? super T>... completors) {
-		CombiningAutocompleter<T> combined = new CombiningAutocompleter<>();
+		CombiningAutocompleter<T> combined = new CombiningAutocompleter<>(false);
 		for (Autocompleter<? super T> all : completors) {
 			combined.addAutocompleter(all);
 		}
