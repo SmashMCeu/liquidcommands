@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 class PlayerAutocompleter<T extends CommandSender> implements Autocompleter<T> {
 
 	private final boolean hideInvisiblePlayers;
+	private final boolean excludeSelf;
 
 	@Override
 	public Collection<String> autocomplete(AbstractCommandSender<? extends T> sender, String startsWith) {
@@ -20,6 +21,7 @@ class PlayerAutocompleter<T extends CommandSender> implements Autocompleter<T> {
 		return Bukkit.getOnlinePlayers()
 				.stream()
 				.filter(other -> !(sender.getSender() instanceof Player player) || player.canSee(other) || !hideInvisiblePlayers)
+				.filter(other -> !(excludeSelf && sender.getSender().equals(other)))
 				.map(Player::getName)
 				.filter(n -> n.toLowerCase().startsWith(lowercase))
 				.collect(Collectors.toList());

@@ -48,11 +48,15 @@ public class Autocomplete {
 
 	@SuppressWarnings("rawtypes")
 	public static <T> Autocompleter<T> players() {
-		return players(true);
+		return players(true, false);
 	}
 
-	public static <T> Autocompleter<T> players(boolean hideInvisiblePlayers) {
-		return new PlayerAutocompleter(hideInvisiblePlayers);
+	public static <T> Autocompleter<T> otherPlayers() {
+		return players(true, true);
+	}
+
+	public static <T> Autocompleter<T> players(boolean hideInvisiblePlayers, boolean excludeSelf) {
+		return new PlayerAutocompleter(hideInvisiblePlayers, false);
 	}
 
 	@SuppressWarnings("rawtypes")
