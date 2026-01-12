@@ -1,13 +1,13 @@
 package de.liquiddev.command;
 
+import com.google.common.base.Preconditions;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.base.Preconditions;
-
 /**
  * TODO rework this to be a part of command adapter or root.
- * 
+ *
  */
 public abstract class ErrorReporter {
 	static ErrorReporter instance = new NullReporter();
@@ -23,7 +23,7 @@ public abstract class ErrorReporter {
 
 	public abstract String getReportText();
 
-	public abstract void reportError(Class<?> clazz, Exception ex, String string);
+	public abstract void reportError(Class<?> clazz, Throwable ex, String string);
 
 	private static class NullReporter extends ErrorReporter {
 		@Override
@@ -32,7 +32,7 @@ public abstract class ErrorReporter {
 		}
 
 		@Override
-		public void reportError(Class<?> clazz, Exception ex, String string) {
+		public void reportError(Class<?> clazz, Throwable ex, String string) {
 			Logger logger = Logger.getLogger(clazz.getName());
 			logger.log(Level.SEVERE, "command execution failed", ex);
 		}

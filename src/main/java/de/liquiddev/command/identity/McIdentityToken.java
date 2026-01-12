@@ -1,14 +1,15 @@
 package de.liquiddev.command.identity;
 
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
 import de.liquiddev.command.Commands;
+import de.liquiddev.command.ErrorReporter;
 import de.liquiddev.command.identity.resolver.McIdentityResolver;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
+
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class McIdentityToken {
@@ -31,11 +32,19 @@ public class McIdentityToken {
 	private volatile boolean resolving;
 
 	protected void fail() {
-		failConsumer.accept(this);
+		try {
+			failConsumer.accept(this);
+		} catch (Throwable t) {
+			ErrorReporter.getDefaultReporter().reportError(McIdentityToken.class, t, "Failed executing fail consumer");
+		}
 	}
 
 	protected void success(McIdentity identity) {
-		successConsumer.accept(identity);
+		try {
+			successConsumer.accept(identity);
+		} catch (Throwable t) {
+			ErrorReporter.getDefaultReporter().reportError(McIdentityToken.class, t, "Failed executing success consumer");
+		}
 	}
 
 	public Object getIdentifier() {
@@ -74,7 +83,7 @@ public class McIdentityToken {
 	}
 
 	@Synchronized
-	private McIdentityToken resolve() {
+	private void resolve() {
 		if (resolving) {
 			throw new IllegalStateException("Token already resolved.");
 		}
@@ -82,24 +91,23 @@ public class McIdentityToken {
 		if (isIdentifiedByName()) {
 			resolver.findByName(name)
 					.thenAccept(idOptional -> {
-						success(idOptional.get());
+						idOptional.ifPresentOrElse(this::success, this::fail);
 					})
 					.exceptionally(ex -> {
-						fail();
+						ErrorReporter.getDefaultReporter().reportError(McIdentityToken.class, ex, "Error resolving identity: " + name);
 						return null;
 					});
 		} else if (isIdentifiedByUuid()) {
 			resolver.findByUuid(uuid)
 					.thenAccept(idOptional -> {
-						success(idOptional.get());
+						idOptional.ifPresentOrElse(this::success, this::fail);
 					})
 					.exceptionally(ex -> {
-						fail();
+						ErrorReporter.getDefaultReporter().reportError(McIdentityToken.class, ex, "Error resolving identity token: " + uuid);
 						return null;
 					});
 		} else {
 			throw new IllegalStateException();
 		}
-		return this;
 	}
 }
