@@ -124,4 +124,35 @@ public class TestCommandArgument {
 		args.next(command, 2);
 		assertFalse(args.checkOptional(-3, "prevargs"));
 	}
+
+	@Test
+	public void testGetIntInvalidReportsFullToken() {
+		CommandNode<?> command = mock(CommandNode.class);
+		CommandArguments args = argumentsOf(command, "junk");
+		InvalidCommandArgException ex = assertThrows(InvalidCommandArgException.class, () -> args.getInt(0));
+		assertEquals("junk", ex.getProvided());
+	}
+
+	@Test
+	public void testGetIntRejectsOverflow() {
+		CommandNode<?> command = mock(CommandNode.class);
+		CommandArguments args = argumentsOf(command, "3000000k");
+		InvalidCommandArgException ex = assertThrows(InvalidCommandArgException.class, () -> args.getInt(0));
+		assertEquals("3000000k", ex.getProvided());
+	}
+
+	@Test
+	public void testGetIntSuffixes() throws InvalidCommandArgException {
+		CommandNode<?> command = mock(CommandNode.class);
+		assertEquals(5_000, argumentsOf(command, "5k").getInt(0));
+		assertEquals(1_000_000, argumentsOf(command, "1m").getInt(0));
+	}
+
+	@Test
+	public void testGetDoubleInvalidReportsFullToken() {
+		CommandNode<?> command = mock(CommandNode.class);
+		CommandArguments args = argumentsOf(command, "junkk");
+		InvalidCommandArgException ex = assertThrows(InvalidCommandArgException.class, () -> args.getDouble(0));
+		assertEquals("junkk", ex.getProvided());
+	}
 }
