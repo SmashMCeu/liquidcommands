@@ -82,37 +82,39 @@ public class CommandArguments {
 
 	public int getInt(int index) throws InvalidCommandArgException {
 		int actualIndex = translateIndex(index, Integer.class);
-		String arg = arguments[actualIndex];
+		String raw = arguments[actualIndex];
 		try {
 			int multiplier = 1;
-			if (arg.endsWith("k")) {
+			String numeric = raw;
+			if (numeric.endsWith("k")) {
 				multiplier = 1_000;
-				arg = arg.substring(0, arg.length() - 1);
-			} else if (arg.endsWith("m")) {
+				numeric = numeric.substring(0, numeric.length() - 1);
+			} else if (numeric.endsWith("m")) {
 				multiplier = 1_000_000;
-				arg = arg.substring(0, arg.length() - 1);
+				numeric = numeric.substring(0, numeric.length() - 1);
 			}
-			return Integer.parseInt(arg) * multiplier;
-		} catch (NumberFormatException ex) {
-			throw new InvalidCommandArgException(command, Integer.class, arg);
+			return Math.multiplyExact(Integer.parseInt(numeric), multiplier);
+		} catch (NumberFormatException | ArithmeticException ex) {
+			throw new InvalidCommandArgException(command, Integer.class, raw);
 		}
 	}
 
 	public double getDouble(int index) throws InvalidCommandArgException {
 		int actualIndex = translateIndex(index, Double.class);
-		String arg = arguments[actualIndex].replace(",", ".");
+		String raw = arguments[actualIndex];
 		try {
 			int multiplier = 1;
-			if (arg.endsWith("k")) {
+			String numeric = raw.replace(",", ".");
+			if (numeric.endsWith("k")) {
 				multiplier = 1_000;
-				arg = arg.substring(0, arg.length() - 1);
-			} else if (arg.endsWith("m")) {
+				numeric = numeric.substring(0, numeric.length() - 1);
+			} else if (numeric.endsWith("m")) {
 				multiplier = 1_000_000;
-				arg = arg.substring(0, arg.length() - 1);
+				numeric = numeric.substring(0, numeric.length() - 1);
 			}
-			return Double.parseDouble(arg) * multiplier;
+			return Double.parseDouble(numeric) * multiplier;
 		} catch (NumberFormatException ex) {
-			throw new InvalidCommandArgException(command, Double.class, arg);
+			throw new InvalidCommandArgException(command, Double.class, raw);
 		}
 	}
 
