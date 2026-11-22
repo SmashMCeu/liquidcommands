@@ -50,14 +50,14 @@ public class AllPlayersAutocompleterTest {
 
 	@Test
 	public void fullOnlinePageSkipsIdentityLookup() {
-		List<String> names = IntStream.range(0, 12)
+		List<String> names = IntStream.range(0, 20)
 				.mapToObj(i -> "Player" + i)
 				.collect(Collectors.toList());
 		AllPlayersAutocompleter<Object> completer = completer(online(names.toArray(new String[0])));
 
 		Collection<String> result = completer.autocomplete(sender, "p");
 
-		assertEquals(names.subList(0, 10), new ArrayList<>(result));
+		assertEquals(names.subList(0, 15), new ArrayList<>(result));
 		verify(resolver, never()).findNamesByPrefix(anyString(), anyInt());
 	}
 
@@ -100,7 +100,7 @@ public class AllPlayersAutocompleterTest {
 				.thenReturn(CompletableFuture.completedFuture(List.of("abPlayer")));
 		AllPlayersAutocompleter<Object> completer = completer(online());
 
-		assertEquals(10, completer.autocomplete(sender, "a").size());
+		assertEquals(15, completer.autocomplete(sender, "a").size());
 		assertEquals(List.of("abPlayer"), new ArrayList<>(completer.autocomplete(sender, "ab")));
 		verify(resolver).findNamesByPrefix("a", OFFLINE_FETCH_LIMIT);
 		verify(resolver).findNamesByPrefix("ab", OFFLINE_FETCH_LIMIT);
@@ -118,8 +118,8 @@ public class AllPlayersAutocompleterTest {
 	}
 
 	@Test
-	public void combinedSuggestionsAreCappedAtTen() {
-		List<String> offline = IntStream.range(0, 10)
+	public void combinedSuggestionsAreCappedAtFifteen() {
+		List<String> offline = IntStream.range(0, 20)
 				.mapToObj(i -> "Liquid" + i)
 				.collect(Collectors.toList());
 		when(resolver.findNamesByPrefix("l", OFFLINE_FETCH_LIMIT))
@@ -129,7 +129,8 @@ public class AllPlayersAutocompleterTest {
 		Collection<String> result = completer.autocomplete(sender, "l");
 
 		assertEquals(List.of("LiquidA", "LiquidB", "Liquid0", "Liquid1", "Liquid2", "Liquid3", "Liquid4", "Liquid5",
-				"Liquid6", "Liquid7"), new ArrayList<>(result));
+				"Liquid6", "Liquid7", "Liquid8", "Liquid9", "Liquid10", "Liquid11", "Liquid12"),
+				new ArrayList<>(result));
 	}
 
 	@Test
