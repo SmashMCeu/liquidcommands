@@ -77,8 +77,10 @@ public class Autocomplete {
 	 * immediately.
 	 * <p>
 	 * Offline names are requested from the identity resolver configured in
-	 * {@link Commands} and cached locally. All identity lookups are asynchronous,
-	 * so autocompletion never blocks the server thread.
+	 * {@link Commands} and cached locally. Offline lookups only happen for
+	 * prefixes of at least three characters; shorter prefixes complete online
+	 * players only. All identity lookups are asynchronous, so autocompletion
+	 * never blocks the server thread.
 	 *
 	 * @param <T> type of sender who requested the autocompletion
 	 * @return autocompleter for online and offline players

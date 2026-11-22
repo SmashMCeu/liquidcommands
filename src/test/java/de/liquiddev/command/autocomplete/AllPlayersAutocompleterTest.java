@@ -62,17 +62,26 @@ public class AllPlayersAutocompleterTest {
 	}
 
 	@Test
+	public void shortPrefixReturnsOnlineOnlyWithoutIdentityLookup() {
+		AllPlayersAutocompleter<Object> completer = completer(online("Liquid", "Lime"));
+
+		assertEquals(List.of("Liquid", "Lime"), new ArrayList<>(completer.autocomplete(sender, "l")));
+		assertEquals(List.of("Liquid", "Lime"), new ArrayList<>(completer.autocomplete(sender, "li")));
+		verify(resolver, never()).findNamesByPrefix(anyString(), anyInt());
+	}
+
+	@Test
 	public void pendingLookupReturnsOnlineAndAddsOfflineNamesOnceCompleted() {
 		CompletableFuture<List<String>> future = new CompletableFuture<>();
-		when(resolver.findNamesByPrefix("l", OFFLINE_FETCH_LIMIT)).thenReturn(future);
+		when(resolver.findNamesByPrefix("liq", OFFLINE_FETCH_LIMIT)).thenReturn(future);
 		AllPlayersAutocompleter<Object> completer = completer(online("Liquid"));
 
-		Collection<String> pending = completer.autocomplete(sender, "l");
+		Collection<String> pending = completer.autocomplete(sender, "liq");
 
 		assertEquals(List.of("Liquid"), new ArrayList<>(pending));
 
 		future.complete(List.of("LiquidOffline"));
-		Collection<String> completed = completer.autocomplete(sender, "l");
+		Collection<String> completed = completer.autocomplete(sender, "liq");
 
 		assertEquals(List.of("Liquid", "LiquidOffline"), new ArrayList<>(completed));
 	}
@@ -92,27 +101,27 @@ public class AllPlayersAutocompleterTest {
 	@Test
 	public void saturatedResponseTriggersLookupForLongerPrefix() {
 		List<String> saturated = IntStream.range(0, OFFLINE_FETCH_LIMIT)
-				.mapToObj(i -> "aPlayer" + i)
+				.mapToObj(i -> "abcPlayer" + i)
 				.collect(Collectors.toList());
-		when(resolver.findNamesByPrefix("a", OFFLINE_FETCH_LIMIT))
+		when(resolver.findNamesByPrefix("abc", OFFLINE_FETCH_LIMIT))
 				.thenReturn(CompletableFuture.completedFuture(saturated));
-		when(resolver.findNamesByPrefix("ab", OFFLINE_FETCH_LIMIT))
-				.thenReturn(CompletableFuture.completedFuture(List.of("abPlayer")));
+		when(resolver.findNamesByPrefix("abcd", OFFLINE_FETCH_LIMIT))
+				.thenReturn(CompletableFuture.completedFuture(List.of("abcdPlayer")));
 		AllPlayersAutocompleter<Object> completer = completer(online());
 
-		assertEquals(15, completer.autocomplete(sender, "a").size());
-		assertEquals(List.of("abPlayer"), new ArrayList<>(completer.autocomplete(sender, "ab")));
-		verify(resolver).findNamesByPrefix("a", OFFLINE_FETCH_LIMIT);
-		verify(resolver).findNamesByPrefix("ab", OFFLINE_FETCH_LIMIT);
+		assertEquals(15, completer.autocomplete(sender, "abc").size());
+		assertEquals(List.of("abcdPlayer"), new ArrayList<>(completer.autocomplete(sender, "abcd")));
+		verify(resolver).findNamesByPrefix("abc", OFFLINE_FETCH_LIMIT);
+		verify(resolver).findNamesByPrefix("abcd", OFFLINE_FETCH_LIMIT);
 	}
 
 	@Test
 	public void offlineDuplicatesOfOnlinePlayersAreRemoved() {
-		when(resolver.findNamesByPrefix("l", OFFLINE_FETCH_LIMIT))
+		when(resolver.findNamesByPrefix("liq", OFFLINE_FETCH_LIMIT))
 				.thenReturn(CompletableFuture.completedFuture(List.of("liquid")));
 		AllPlayersAutocompleter<Object> completer = completer(online("Liquid"));
 
-		Collection<String> result = completer.autocomplete(sender, "l");
+		Collection<String> result = completer.autocomplete(sender, "liq");
 
 		assertEquals(List.of("Liquid"), new ArrayList<>(result));
 	}
@@ -122,11 +131,11 @@ public class AllPlayersAutocompleterTest {
 		List<String> offline = IntStream.range(0, 20)
 				.mapToObj(i -> "Liquid" + i)
 				.collect(Collectors.toList());
-		when(resolver.findNamesByPrefix("l", OFFLINE_FETCH_LIMIT))
+		when(resolver.findNamesByPrefix("liq", OFFLINE_FETCH_LIMIT))
 				.thenReturn(CompletableFuture.completedFuture(offline));
 		AllPlayersAutocompleter<Object> completer = completer(online("LiquidA", "LiquidB"));
 
-		Collection<String> result = completer.autocomplete(sender, "l");
+		Collection<String> result = completer.autocomplete(sender, "liq");
 
 		assertEquals(List.of("LiquidA", "LiquidB", "Liquid0", "Liquid1", "Liquid2", "Liquid3", "Liquid4", "Liquid5",
 				"Liquid6", "Liquid7", "Liquid8", "Liquid9", "Liquid10", "Liquid11", "Liquid12"),
@@ -136,13 +145,13 @@ public class AllPlayersAutocompleterTest {
 	@Test
 	public void repeatedRequestsWhileInFlightUseOneIdentityLookup() {
 		CompletableFuture<List<String>> future = new CompletableFuture<>();
-		when(resolver.findNamesByPrefix("l", OFFLINE_FETCH_LIMIT)).thenReturn(future);
+		when(resolver.findNamesByPrefix("liq", OFFLINE_FETCH_LIMIT)).thenReturn(future);
 		AllPlayersAutocompleter<Object> completer = completer(online());
 
-		completer.autocomplete(sender, "l");
-		completer.autocomplete(sender, "l");
+		completer.autocomplete(sender, "liq");
+		completer.autocomplete(sender, "liq");
 
-		verify(resolver, times(1)).findNamesByPrefix("l", OFFLINE_FETCH_LIMIT);
+		verify(resolver, times(1)).findNamesByPrefix("liq", OFFLINE_FETCH_LIMIT);
 	}
 
 	private AllPlayersAutocompleter<Object> completer(Autocompleter<? super Object> online) {

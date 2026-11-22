@@ -16,9 +16,11 @@ import java.util.function.Supplier;
  * (delegated to another autocompleter) plus offline players matching the input.
  * <p>
  * Offline names are requested from an {@link McIdentityResolver} asynchronously
- * and cached. Every lookup only ever inspects already completed futures, so
- * {@link #autocomplete(AbstractCommandSender, String)} never blocks the calling
- * thread.
+ * and cached. Offline lookups are only made for prefixes of at least
+ * {@value #MIN_OFFLINE_PREFIX_LENGTH} characters; shorter prefixes return
+ * online players only. Every lookup only ever inspects already completed
+ * futures, so {@link #autocomplete(AbstractCommandSender, String)} never blocks
+ * the calling thread.
  *
  * @param <T> type of sender who requested the autocompletion
  */
@@ -26,6 +28,7 @@ class AllPlayersAutocompleter<T> implements Autocompleter<T> {
 
 	private static final int OFFLINE_FETCH_LIMIT = 50;
 	private static final int MAX_SUGGESTIONS = 15;
+	private static final int MIN_OFFLINE_PREFIX_LENGTH = 3;
 
 	private static final Cache<String, CompletableFuture<List<String>>> OFFLINE_CACHE = CacheBuilder.newBuilder()
 			.maximumSize(512)
@@ -56,7 +59,7 @@ class AllPlayersAutocompleter<T> implements Autocompleter<T> {
 		if (prefix.isEmpty()) {
 			return onlineNames;
 		}
-		if (onlineNames.size() >= MAX_SUGGESTIONS) {
+		if (prefix.length() < MIN_OFFLINE_PREFIX_LENGTH || onlineNames.size() >= MAX_SUGGESTIONS) {
 			return firstSuggestions(onlineNames);
 		}
 		Map<String, String> merged = new LinkedHashMap<>();
