@@ -31,8 +31,8 @@ class AllPlayersAutocompleter<T> implements Autocompleter<T> {
 	private static final int MIN_OFFLINE_PREFIX_LENGTH = 3;
 
 	private static final Cache<String, CompletableFuture<List<String>>> OFFLINE_CACHE = CacheBuilder.newBuilder()
-			.maximumSize(512)
-			.expireAfterWrite(5, TimeUnit.MINUTES)
+			.maximumSize(1024)
+			.expireAfterWrite(20, TimeUnit.MINUTES)
 			.build();
 
 	private final Autocompleter<? super T> online;

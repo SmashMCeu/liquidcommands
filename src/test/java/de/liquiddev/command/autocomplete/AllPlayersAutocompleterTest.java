@@ -57,7 +57,7 @@ public class AllPlayersAutocompleterTest {
 
 		Collection<String> result = completer.autocomplete(sender, "p");
 
-		assertEquals(names.subList(0, 15), new ArrayList<>(result));
+		assertEquals(names.subList(0, 10), new ArrayList<>(result));
 		verify(resolver, never()).findNamesByPrefix(anyString(), anyInt());
 	}
 
@@ -109,7 +109,7 @@ public class AllPlayersAutocompleterTest {
 				.thenReturn(CompletableFuture.completedFuture(List.of("abcdPlayer")));
 		AllPlayersAutocompleter<Object> completer = completer(online());
 
-		assertEquals(15, completer.autocomplete(sender, "abc").size());
+		assertEquals(10, completer.autocomplete(sender, "abc").size());
 		assertEquals(List.of("abcdPlayer"), new ArrayList<>(completer.autocomplete(sender, "abcd")));
 		verify(resolver).findNamesByPrefix("abc", OFFLINE_FETCH_LIMIT);
 		verify(resolver).findNamesByPrefix("abcd", OFFLINE_FETCH_LIMIT);
@@ -127,7 +127,7 @@ public class AllPlayersAutocompleterTest {
 	}
 
 	@Test
-	public void combinedSuggestionsAreCappedAtFifteen() {
+	public void combinedSuggestionsAreCappedAtTen() {
 		List<String> offline = IntStream.range(0, 20)
 				.mapToObj(i -> "Liquid" + i)
 				.collect(Collectors.toList());
@@ -138,8 +138,7 @@ public class AllPlayersAutocompleterTest {
 		Collection<String> result = completer.autocomplete(sender, "liq");
 
 		assertEquals(List.of("LiquidA", "LiquidB", "Liquid0", "Liquid1", "Liquid2", "Liquid3", "Liquid4", "Liquid5",
-				"Liquid6", "Liquid7", "Liquid8", "Liquid9", "Liquid10", "Liquid11", "Liquid12"),
-				new ArrayList<>(result));
+				"Liquid6", "Liquid7"), new ArrayList<>(result));
 	}
 
 	@Test
