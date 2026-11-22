@@ -50,14 +50,14 @@ public class AllPlayersAutocompleterTest {
 
 	@Test
 	public void fullOnlinePageSkipsIdentityLookup() {
-		List<String> names = IntStream.range(0, 20)
+		List<String> names = IntStream.range(0, 30)
 				.mapToObj(i -> "Player" + i)
 				.collect(Collectors.toList());
 		AllPlayersAutocompleter<Object> completer = completer(online(names.toArray(new String[0])));
 
 		Collection<String> result = completer.autocomplete(sender, "p");
 
-		assertEquals(names.subList(0, 10), new ArrayList<>(result));
+		assertEquals(names.subList(0, 25), new ArrayList<>(result));
 		verify(resolver, never()).findNamesByPrefix(anyString(), anyInt());
 	}
 
@@ -109,7 +109,7 @@ public class AllPlayersAutocompleterTest {
 				.thenReturn(CompletableFuture.completedFuture(List.of("abcdPlayer")));
 		AllPlayersAutocompleter<Object> completer = completer(online());
 
-		assertEquals(10, completer.autocomplete(sender, "abc").size());
+		assertEquals(25, completer.autocomplete(sender, "abc").size());
 		assertEquals(List.of("abcdPlayer"), new ArrayList<>(completer.autocomplete(sender, "abcd")));
 		verify(resolver).findNamesByPrefix("abc", OFFLINE_FETCH_LIMIT);
 		verify(resolver).findNamesByPrefix("abcd", OFFLINE_FETCH_LIMIT);
@@ -127,8 +127,8 @@ public class AllPlayersAutocompleterTest {
 	}
 
 	@Test
-	public void combinedSuggestionsAreCappedAtTen() {
-		List<String> offline = IntStream.range(0, 20)
+	public void combinedSuggestionsAreCappedAtTwentyFive() {
+		List<String> offline = IntStream.range(0, 40)
 				.mapToObj(i -> "Liquid" + i)
 				.collect(Collectors.toList());
 		when(resolver.findNamesByPrefix("liq", OFFLINE_FETCH_LIMIT))
@@ -137,8 +137,11 @@ public class AllPlayersAutocompleterTest {
 
 		Collection<String> result = completer.autocomplete(sender, "liq");
 
-		assertEquals(List.of("LiquidA", "LiquidB", "Liquid0", "Liquid1", "Liquid2", "Liquid3", "Liquid4", "Liquid5",
-				"Liquid6", "Liquid7"), new ArrayList<>(result));
+		List<String> expected = new ArrayList<>(List.of("LiquidA", "LiquidB"));
+		IntStream.range(0, 23)
+				.mapToObj(i -> "Liquid" + i)
+				.forEach(expected::add);
+		assertEquals(expected, new ArrayList<>(result));
 	}
 
 	@Test

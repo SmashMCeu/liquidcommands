@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 class AllPlayersAutocompleter<T> implements Autocompleter<T> {
 
 	private static final int OFFLINE_FETCH_LIMIT = 50;
-	private static final int MAX_SUGGESTIONS = 10;
+	private static final int MAX_SUGGESTIONS = 25;
 	private static final int MIN_OFFLINE_PREFIX_LENGTH = 3;
 
 	private static final Cache<String, CompletableFuture<List<String>>> OFFLINE_CACHE = CacheBuilder.newBuilder()
